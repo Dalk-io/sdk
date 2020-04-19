@@ -1,0 +1,21 @@
+{
+  "name": "dalk-sdk",
+  "version": "0.0.1",
+  "description": "Dalk sdk to add chat feature on any app",
+  "main": "sdk.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mylisabox/lisa-box.git"
+  },
+  "pre-commit": [],
+  "keywords": [],
+  "author": "jaumard",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mylisabox/lisa-box/issues"
+  },
+  "homepage": "https://github.com/mylisabox/lisa-box#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
