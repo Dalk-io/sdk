@@ -185,7 +185,7 @@ class DalkSdk {
       'id': me.id,
       'name': me.name,
       'avatar': me.avatar,
-      'signature': signature,
+      if (signature != null) 'signature': signature,
     });
     _logger.info('registerUser success');
 

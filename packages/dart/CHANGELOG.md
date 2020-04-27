@@ -1,3 +1,7 @@
+## 0.0.3
+
+- fix connection without signature 
+
 ## 0.0.2
 
 - fix pub warnings

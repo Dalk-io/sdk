@@ -33,7 +33,6 @@ void main() {
       'id': me.id,
       'name': me.name,
       'avatar': me.avatar,
-      'signature': null,
     });
 
     verify(peer.registerFallback(any));
