@@ -230,7 +230,6 @@ void main() {
         },
       ),
     );
-
   });
 
   test('updateMessageStatusConvId should trigger a new message event', () {

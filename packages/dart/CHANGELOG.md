@@ -1,3 +1,7 @@
+## 0.0.2
+
+- fix pub warnings
+
 ## 0.0.1
 
 - Initial version
