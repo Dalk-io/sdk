@@ -37,8 +37,8 @@ class DalkConversation {
 }
 
 class DalkSdk {
-    constructor(projectId, me) {
-        this._sdk = DalkSdkCreate(projectId, me);
+    constructor(projectId, me, signature = null) {
+        this._sdk = DalkSdkCreate(projectId, me, signature);
     }
 
     connect() {

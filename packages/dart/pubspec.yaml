@@ -1,6 +1,6 @@
 name: dalk_sdk
 description: Dalk.io sdk, add a realtime chat feature on any Dart/Flutter app
-version: 0.0.1
+version: 0.0.2
 homepage: https://dalk.io
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   meta: ^1.1.8
   js: ^0.6.1+1
   retry: ^3.0.0+1
-  args: ^1.6.0
+  args: ^1.5.2
   logging: ^0.11.4
   json_rpc_2: ^2.1.1
   stream_channel: ^2.0.0

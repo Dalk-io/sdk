@@ -85,7 +85,7 @@ class DalkSdk {
   bool _isDevMode = false;
   bool _isMocked = false;
   int _connectionRetries = 0;
-  int _maxConnectionRetries = 20;
+  final int _maxConnectionRetries = 20;
   bool _shouldReconnect = true;
   final Logger _logger = Logger('DalkSdk');
   final StreamController<Conversation> _newConversation = StreamController.broadcast();

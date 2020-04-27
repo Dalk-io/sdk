@@ -1,3 +1,6 @@
+@JS()
+library dalk_sdk;
+
 import 'dart:html';
 
 import 'package:dalk_sdk/src/sdk_base.dart';
@@ -17,14 +20,6 @@ external _Exports get exports;
 
 @JS()
 class _Exports {}
-
-Function _wrapMain(Function main) {
-  if (main is Object Function()) {
-    return allowInterop((_) => main());
-  } else {
-    return allowInterop((args) => main(List<String>.from(args as List<Object>)));
-  }
-}
 
 /// @nodoc
 void main() {
