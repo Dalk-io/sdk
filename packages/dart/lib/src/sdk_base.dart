@@ -183,8 +183,10 @@ class DalkSdk {
 
     await _peer.sendRequest('registerUser', {
       'id': me.id,
+      if (me.name != null)
       'name': me.name,
-      'avatar': me.avatar,
+      if (me.avatar != null)
+        'avatar': me.avatar,
       if (signature != null) 'signature': signature,
     });
     _logger.info('registerUser success');

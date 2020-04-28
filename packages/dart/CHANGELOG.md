@@ -1,3 +1,7 @@
+## 0.0.4
+
+- fix connection without avatar
+
 ## 0.0.3
 
 - fix connection without signature 
