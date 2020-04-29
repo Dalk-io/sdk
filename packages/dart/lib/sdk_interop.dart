@@ -1,4 +1,5 @@
 @JS()
+/// experimental feature to build dalk.io SDK to JS library
 library dalk_sdk;
 
 import 'dart:html';
