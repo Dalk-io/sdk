@@ -45,7 +45,7 @@ void main(List<String> arguments) async {
       print('conversation: $conversation');
     } else {
       print('send $line to ${conversation.id}');
-      await conversation.sendMessage(line);
+      await conversation.sendMessage(message: line);
     }
   });
 }

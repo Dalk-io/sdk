@@ -79,8 +79,8 @@ void main() {
   setProperty(
       window,
       'dalkSendMessage',
-      allowInterop((String conversationId, String message) => Promise<void>(allowInterop((resolve, reject) {
-            conversations.firstWhere((conv) => conv.id == conversationId, orElse: () => null)?.sendMessage(message)?.then(resolve)?.catchError(reject);
+      allowInterop((String conversationId, String message, Map<String, dynamic> metadata) => Promise<void>(allowInterop((resolve, reject) {
+            conversations.firstWhere((conv) => conv.id == conversationId, orElse: () => null)?.sendMessage(message: message, metadata: metadata)?.then(resolve)?.catchError(reject);
           }))));
 
   setProperty(

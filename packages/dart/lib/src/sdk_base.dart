@@ -222,15 +222,25 @@ class DalkSdk {
       //method already registered, ignore error
     }
     try {
-      _peer.registerMethod('updateMessageStatus$id', _forwardMessageUpdate);
+      _peer.registerMethod('updateMessageStatus$id', _forwardMessageUpdateStatus);
+    } catch (ex) {
+      //method already registered, ignore error
+    }
+    try {
+      _peer.registerMethod('updateMessage$id', _forwardMessageUpdate);
     } catch (ex) {
       //method already registered, ignore error
     }
   }
 
-  void _forwardMessageUpdate(Parameters parameters) {
+  void _forwardMessageUpdateStatus(Parameters parameters) {
     _logger.info('updateMessageStatus ${parameters.value}');
     (_conversations[parameters.method.replaceAll('updateMessageStatus', '')] as _ConversationImpl)?._messageUpdate(parameters.value);
+  }
+
+  void _forwardMessageUpdate(Parameters parameters) {
+    _logger.info('updateMessage ${parameters.value}');
+    (_conversations[parameters.method.replaceAll('updateMessage', '')] as _ConversationImpl)?._messageUpdate(parameters.value);
   }
 
   void _forwardIncomingMessage(Parameters parameters) {

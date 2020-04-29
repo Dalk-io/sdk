@@ -43,7 +43,7 @@ class SendCommand extends Command with DalkSdkSetup {
       stderr.writeln('conversation not found, check your conversation id: $convId');
       exit(2);
     } else {
-      await conversation.sendMessage(argResults.rest.first);
+      await conversation.sendMessage(message: argResults.rest.first);
     }
   }
 }

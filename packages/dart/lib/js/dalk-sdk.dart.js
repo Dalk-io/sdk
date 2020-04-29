@@ -6389,8 +6389,8 @@
       window.dalkCreateOneToOneConversation = P.allowInterop(new F.main_closure3(t1), {func: 1, ret: [F.Promise, -2], args: [G.User, P.String]});
       window.dalkCreateGroupConversation = P.allowInterop(new F.main_closure4(t1), {func: 1, ret: [F.Promise, -2], args: [[P.List, G.User], P.String, P.String, P.String]});
       window.dalkDisconnect = P.allowInterop(new F.main_closure5(t1), {func: 1, ret: [F.Promise, -2]});
+      window.dalkSendMessage = P.allowInterop(new F.main_closure6(t1), {func: 1, ret: [F.Promise, -2], args: [P.String, P.String, [P.Map, P.String,,]]});
       t2 = {func: 1, ret: [F.Promise, -2], args: [P.String, P.String]};
-      window.dalkSendMessage = P.allowInterop(new F.main_closure6(t1), t2);
       window.dalkSetMessageAsSeen = P.allowInterop(new F.main_closure7(t1), t2);
       window.dalkLoadMessages = P.allowInterop(new F.main_closure8(t1), t2);
       window.dalkSetOptions = P.allowInterop(new F.main_closure9(t1), {func: 1, ret: [F.Promise, -2], args: [P.String, P.String, P.String]});
@@ -6454,10 +6454,12 @@
     main_closure6: function main_closure6(t0) {
       this._box_0 = t0;
     },
-    main__closure2: function main__closure2(t0, t1, t2) {
-      this._box_0 = t0;
-      this.conversationId = t1;
-      this.message = t2;
+    main__closure2: function main__closure2(t0, t1, t2, t3) {
+      var _ = this;
+      _._box_0 = t0;
+      _.conversationId = t1;
+      _.message = t2;
+      _.metadata = t3;
     },
     main___closure6: function main___closure6(t0) {
       this.conversationId = t0;
@@ -6578,14 +6580,24 @@
       return;
     },
     _Message_fromBackend: function(data) {
-      var userStatus,
+      var userStatus, t2, t3, t4, t5, t6, t7, _null = null,
+        _s9_ = "updatedAt",
         t1 = H.listTypeCast(data.$index(0, "statusDetails"));
-      t1 = t1 == null ? null : J.map$1$1$ax(t1, new G._Message_fromBackend_closure(), G.UserMessageStatus);
-      t1 = t1 == null ? null : H.CastIterable_CastIterable(t1, H.getRuntimeTypeArgument(t1, "Iterable", 0), G.UserMessageStatus);
-      userStatus = t1 == null ? null : P.List_List$from(t1, true, H.getRuntimeTypeArgument(t1, "Iterable", 0));
+      t1 = t1 == null ? _null : J.map$1$1$ax(t1, new G._Message_fromBackend_closure(), G.UserMessageStatus);
+      t1 = t1 == null ? _null : H.CastIterable_CastIterable(t1, H.getRuntimeTypeArgument(t1, "Iterable", 0), G.UserMessageStatus);
+      userStatus = t1 == null ? _null : P.List_List$from(t1, true, H.getRuntimeTypeArgument(t1, "Iterable", 0));
       if (userStatus == null)
         userStatus = H.setRuntimeTypeInfo([], [G.UserMessageStatus]);
-      return new G._$__Message(H.stringTypeCheck(data.$index(0, "id")), H.stringTypeCheck(data.$index(0, "senderId")), H.stringTypeCheck(data.$index(0, "text")), P.DateTime_parse(H.stringTypeCheck(data.$index(0, "timestamp"))), G._statusFromBackend(H.stringTypeCheck(data.$index(0, "status"))), userStatus);
+      t1 = H.stringTypeCheck(data.$index(0, "id"));
+      t2 = H.stringTypeCheck(data.$index(0, "senderId"));
+      t3 = H.stringTypeCheck(data.$index(0, "text"));
+      t4 = P.DateTime_parse(H.stringTypeCheck(data.$index(0, "createdAt")));
+      t5 = data.$index(0, _s9_) == null ? _null : P.DateTime_parse(H.stringTypeCheck(data.$index(0, _s9_)));
+      t6 = G._statusFromBackend(H.stringTypeCheck(data.$index(0, "status")));
+      t7 = data.$index(0, "metadata");
+      if (t7 == null)
+        t7 = P.LinkedHashMap_LinkedHashMap$_empty(P.String, _null);
+      return G._$__Message$(t1, t2, t3, t4, t5, t6, userStatus, H.assertSubtype(t7, "$isMap", [P.String, null], "$asMap"));
     },
     _ConversationImpl$_: function(admins, avatar, currentUser, id, isGroup, logger, messages, peer, subject, users) {
       var t1 = H.setRuntimeTypeInfo([], [G.User]),
@@ -6613,6 +6625,9 @@
     },
     __$_MessageCopyWithImpl$: function(_value, _then, $$Res) {
       return new G.__$_MessageCopyWithImpl(_value, new G.__$_MessageCopyWithImpl_closure(_then, $$Res), [$$Res]);
+    },
+    _$__Message$: function(id, senderId, text, createdAt, updatedAt, $status, statusDetails, metadata) {
+      return new G._$__Message(id, senderId, text, createdAt, updatedAt, $status, statusDetails, metadata);
     },
     MessageStatus: function MessageStatus(t0) {
       this._sdk_base$_name = t0;
@@ -6746,14 +6761,16 @@
       this._then = t0;
       this.$$Res = t1;
     },
-    _$__Message: function _$__Message(t0, t1, t2, t3, t4, t5) {
+    _$__Message: function _$__Message(t0, t1, t2, t3, t4, t5, t6, t7) {
       var _ = this;
       _.id = t0;
       _.senderId = t1;
       _.text = t2;
       _.createdAt = t3;
-      _.status = t4;
-      _.statusDetails = t5;
+      _.updatedAt = t4;
+      _.status = t5;
+      _.statusDetails = t6;
+      _.metadata = t7;
     },
     __Message: function __Message() {
     },
@@ -9159,13 +9176,13 @@
     call$2: function(o, tag) {
       return this.getUnknownTag(o, tag);
     },
-    $signature: 49
+    $signature: 50
   };
   H.initHooks_closure1.prototype = {
     call$1: function(tag) {
       return this.prototypeForTag(H.stringTypeCheck(tag));
     },
-    $signature: 74
+    $signature: 75
   };
   H.JSSyntaxRegExp.prototype = {
     toString$0: function(_) {
@@ -9587,7 +9604,7 @@
     call$2: function(errorCode, result) {
       this.$protected(H.intTypeCheck(errorCode), result);
     },
-    $signature: 43
+    $signature: 44
   };
   P._BroadcastSubscription.prototype = {
     _onPause$0: function() {
@@ -10059,7 +10076,7 @@
     $defaultValues: function() {
       return [null];
     },
-    $signature: 61
+    $signature: 62
   };
   P._Future__chainForeignFuture_closure1.prototype = {
     call$0: function() {
@@ -10131,7 +10148,7 @@
     call$1: function(_) {
       return this.originalSource;
     },
-    $signature: 62
+    $signature: 63
   };
   P._Future__propagateToListeners_handleValueCallback.prototype = {
     call$0: function() {
@@ -12526,7 +12543,7 @@
       t1._contents += P.Error_safeToString(value);
       t2.comma = ", ";
     },
-    $signature: 42
+    $signature: 43
   };
   P.bool.prototype = {};
   P.DateTime.prototype = {
@@ -13030,7 +13047,7 @@
     call$2: function(msg, position) {
       throw H.wrapException(P.FormatException$("Illegal IPv4 address, " + msg, this.host, position));
     },
-    $signature: 50
+    $signature: 51
   };
   P.Uri_parseIPv6Address_error.prototype = {
     call$2: function(msg, position) {
@@ -13039,7 +13056,7 @@
     call$1: function(msg) {
       return this.call$2(msg, null);
     },
-    $signature: 52
+    $signature: 53
   };
   P.Uri_parseIPv6Address_parseHex.prototype = {
     call$2: function(start, end) {
@@ -13053,7 +13070,7 @@
         this.error.call$2("each part must be in the range of `0x0..0xFFFF`", start);
       return value;
     },
-    $signature: 56
+    $signature: 57
   };
   P._Uri.prototype = {
     get$userInfo: function() {
@@ -13376,7 +13393,7 @@
     call$1: function(_) {
       return new Uint8Array(96);
     },
-    $signature: 67
+    $signature: 68
   };
   P._createTables_build.prototype = {
     call$2: function(state, defaultTransition) {
@@ -13387,7 +13404,7 @@
       J.fillRange$3$x(t1, 0, 96, defaultTransition);
       return t1;
     },
-    $signature: 68
+    $signature: 69
   };
   P._createTables_setChars.prototype = {
     call$3: function(target, chars, transition) {
@@ -13856,7 +13873,7 @@
     call$1: function(e) {
       return this.onData.call$1(H.interceptedTypeCheck(e, "$isEvent"));
     },
-    $signature: 69
+    $signature: 70
   };
   P._AcceptStructuredClone.prototype = {
     findSlot$1: function(value) {
@@ -13936,7 +13953,7 @@
       J.$indexSet$ax(t1, key, t2);
       return t2;
     },
-    $signature: 72
+    $signature: 73
   };
   P._AcceptStructuredCloneDart2Js.prototype = {
     forEachJsField$2: function(object, action) {
@@ -14206,7 +14223,7 @@
     },
     "call*": "call$0",
     $requiredArgCount: 0,
-    $signature: 77
+    $signature: 78
   };
   F.main__closure8.prototype = {
     call$2: function(resolve, reject) {
@@ -14216,7 +14233,7 @@
     },
     "call*": "call$2",
     $requiredArgCount: 2,
-    $signature: 79
+    $signature: 80
   };
   F.main_closure1.prototype = {
     call$0: function() {
@@ -14225,7 +14242,7 @@
     },
     "call*": "call$0",
     $requiredArgCount: 0,
-    $signature: 83
+    $signature: 84
   };
   F.main__closure7.prototype = {
     call$2: function(resolve, reject) {
@@ -14327,21 +14344,21 @@
     $signature: 6
   };
   F.main_closure6.prototype = {
-    call$2: function(conversationId, message) {
-      var t1 = P.allowInterop(new F.main__closure2(this._box_0, H.stringTypeCheck(conversationId), H.stringTypeCheck(message)), {func: 1, ret: -1, args: [{func: 1, ret: -1, args: [-1]}, P.Function]});
+    call$3: function(conversationId, message, metadata) {
+      var t1 = P.allowInterop(new F.main__closure2(this._box_0, H.stringTypeCheck(conversationId), H.stringTypeCheck(message), H.assertSubtype(metadata, "$isMap", [P.String, null], "$asMap")), {func: 1, ret: -1, args: [{func: 1, ret: -1, args: [-1]}, P.Function]});
       return new self.Promise(t1, -1);
     },
-    "call*": "call$2",
-    $requiredArgCount: 2,
-    $signature: 19
+    "call*": "call$3",
+    $requiredArgCount: 3,
+    $signature: 42
   };
   F.main__closure2.prototype = {
     call$2: function(resolve, reject) {
-      var t1;
+      var t1, _this = this;
       H.functionTypeCheck(resolve, {func: 1, ret: -1, args: [-1]});
       H.interceptedTypeCheck(reject, "$isFunction");
-      t1 = J.firstWhere$2$orElse$ax(this._box_0.conversations, new F.main___closure6(this.conversationId), new F.main___closure7());
-      t1 = t1 == null ? null : t1.sendMessage$1(this.message);
+      t1 = J.firstWhere$2$orElse$ax(_this._box_0.conversations, new F.main___closure6(_this.conversationId), new F.main___closure7());
+      t1 = t1 == null ? null : t1.sendMessage$2$message$metadata(_this.message, _this.metadata);
       t1 = t1 == null ? null : t1.then$1$1(0, resolve, -1);
       if (t1 != null)
         t1.catchError$1(reject);
@@ -14369,7 +14386,7 @@
     },
     "call*": "call$2",
     $requiredArgCount: 2,
-    $signature: 19
+    $signature: 23
   };
   F.main__closure1.prototype = {
     call$2: function(resolve, reject) {
@@ -14408,7 +14425,7 @@
     },
     "call*": "call$2",
     $requiredArgCount: 2,
-    $signature: 19
+    $signature: 23
   };
   F.main__closure0.prototype = {
     call$2: function(resolve, reject) {
@@ -14441,7 +14458,7 @@
     call$1: function(_) {
       return this.resolve.call$1(this.conv.messages);
     },
-    $signature: 44
+    $signature: 45
   };
   F.main_closure9.prototype = {
     call$3: function(conversationId, subject, avatar) {
@@ -14450,7 +14467,7 @@
     },
     "call*": "call$3",
     $requiredArgCount: 3,
-    $signature: 45
+    $signature: 46
   };
   F.main__closure.prototype = {
     call$2: function(resolve, reject) {
@@ -14488,7 +14505,7 @@
     },
     "call*": "call$3",
     $requiredArgCount: 3,
-    $signature: 46
+    $signature: 47
   };
   G.MessageStatus.prototype = {
     toString$0: function(_) {
@@ -14505,7 +14522,7 @@
       G._statusFromBackend(H.stringTypeCheck($status.$index(0, "status")));
       return new G.UserMessageStatus();
     },
-    $signature: 47
+    $signature: 48
   };
   G.Conversation.prototype = {};
   G._ConversationImpl.prototype = {
@@ -14699,14 +14716,15 @@
       });
       return P._asyncStartSync($async$_setMessageStatus$2, $async$completer);
     },
-    sendMessage$1: function(message) {
-      return this.sendMessage$body$_ConversationImpl(message);
+    sendMessage$2$message$metadata: function(message, metadata) {
+      H.assertSubtype(metadata, "$isMap", [P.String, null], "$asMap");
+      return this.sendMessage$body$_ConversationImpl(message, metadata);
     },
-    sendMessage$body$_ConversationImpl: function(message) {
+    sendMessage$body$_ConversationImpl: function(message, metadata) {
       var $async$goto = 0,
         $async$completer = P._makeAsyncAwaitCompleter(-1),
-        $async$handler = 1, $async$currentError, $async$next = [], $async$self = this, date, messageData, result, existingIndex, ex, stack, t1, t2, t3, t4, t5, exception, $async$exception;
-      var $async$sendMessage$1 = P._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        $async$handler = 1, $async$currentError, $async$next = [], $async$self = this, date, messageData, t1, result, existingIndex, ex, stack, t2, t3, t4, t5, t6, exception, $async$exception;
+      var $async$sendMessage$2$message$metadata = P._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1) {
           $async$currentError = $async$result;
           $async$goto = $async$handler;
@@ -14719,23 +14737,33 @@
                 throw H.wrapException(G.ConnectionClosedException$_());
               $async$handler = 3;
               date = new P.DateTime(Date.now(), false);
-              messageData = new G._$__Message("temporary_" + date._core$_value, $async$self.currentUser.id, message, date, C.MessageStatus_3, H.setRuntimeTypeInfo([], [G.UserMessageStatus]));
-              t1 = $async$self.messages;
-              C.JSArray_methods.add$1(t1, messageData);
-              t2 = $async$self._messageEvent;
-              t2.add$1(0, messageData);
+              t2 = "temporary_" + date._core$_value;
+              t3 = $async$self.currentUser.id;
+              t4 = H.setRuntimeTypeInfo([], [G.UserMessageStatus]);
+              t5 = metadata == null;
+              t6 = t5 ? P.LinkedHashMap_LinkedHashMap$_empty(P.String, null) : metadata;
+              messageData = G._$__Message$(t2, t3, message, date, null, C.MessageStatus_3, t4, t6);
+              t6 = $async$self.messages;
+              C.JSArray_methods.add$1(t6, messageData);
+              t4 = $async$self._messageEvent;
+              t4.add$1(0, messageData);
               t3 = $async$self._peer;
-              t4 = P.String;
-              t5 = P.LinkedHashMap_LinkedHashMap$_literal(["conversationId", $async$self.id, "text", message], t4, t4);
+              t2 = P.String;
+              t1 = P.LinkedHashMap_LinkedHashMap$_empty(t2, P.Object);
+              J.$indexSet$ax(t1, "conversationId", $async$self.id);
+              if (message != null)
+                J.$indexSet$ax(t1, "text", message);
+              if (!t5)
+                J.$indexSet$ax(t1, "metadata", metadata);
               $async$goto = 6;
-              return P._asyncAwait(t3._client.sendRequest$2("sendMessage", t5), $async$sendMessage$1);
+              return P._asyncAwait(t3._client.sendRequest$2("sendMessage", t1), $async$sendMessage$2$message$metadata);
             case 6:
               // returning from await.
               result = $async$result;
               $async$self._logger.log$4(C.Level_INFO_800, "sendMessage result " + H.S(result), null, null);
-              existingIndex = C.JSArray_methods.indexWhere$1(t1, new G._ConversationImpl_sendMessage_closure(messageData));
-              C.JSArray_methods.$indexSet(t1, existingIndex, G._Message_fromBackend(H.assertSubtype(result, "$isMap", [t4, null], "$asMap")));
-              t2.add$1(0, C.JSArray_methods.$index(t1, existingIndex));
+              existingIndex = C.JSArray_methods.indexWhere$1(t6, new G._ConversationImpl_sendMessage_closure(messageData));
+              C.JSArray_methods.$indexSet(t6, existingIndex, G._Message_fromBackend(H.assertSubtype(result, "$isMap", [t2, null], "$asMap")));
+              t4.add$1(0, C.JSArray_methods.$index(t6, existingIndex));
               $async$handler = 1;
               // goto after finally
               $async$goto = 5;
@@ -14772,7 +14800,7 @@
               return P._asyncRethrow($async$currentError, $async$completer);
           }
       });
-      return P._asyncStartSync($async$sendMessage$1, $async$completer);
+      return P._asyncStartSync($async$sendMessage$2$message$metadata, $async$completer);
     },
     loadMessages$0: function() {
       var $async$goto = 0,
@@ -14928,7 +14956,7 @@
       if (message.status === C.MessageStatus_0)
         this.$this._setMessageStatus$2(message.id, C.MessageStatus_1);
     },
-    $signature: 48
+    $signature: 49
   };
   G._ConversationImpl__messageUpdate_closure.prototype = {
     call$1: function(m) {
@@ -14969,7 +14997,7 @@
     call$1: function(message) {
       return G._Message_fromBackend(H.assertSubtype(message, "$isMap", [P.String, null], "$asMap"));
     },
-    $signature: 23
+    $signature: 24
   };
   G.User.prototype = {
     toJson$0: function() {
@@ -15068,11 +15096,21 @@
             case 2:
               // returning from await.
               t1 = $async$self._peer;
-              t2 = $async$self.me;
-              t3 = P.String;
-              t3 = P.LinkedHashMap_LinkedHashMap$_literal(["id", t2.id, "name", t2.name, "avatar", t2.avatar, "signature", $async$self.signature], t3, t3);
+              t2 = P.String;
+              t2 = P.LinkedHashMap_LinkedHashMap$_empty(t2, t2);
+              t3 = $async$self.me;
+              t2.$indexSet(0, "id", t3.id);
+              t4 = t3.name;
+              if (t4 != null)
+                t2.$indexSet(0, "name", t4);
+              t3 = t3.avatar;
+              if (t3 != null)
+                t2.$indexSet(0, "avatar", t3);
+              t3 = $async$self.signature;
+              if (t3 != null)
+                t2.$indexSet(0, "signature", t3);
               $async$goto = 3;
-              return P._asyncAwait(t1._client.sendRequest$2("registerUser", t3), $async$_connect$0);
+              return P._asyncAwait(t1._client.sendRequest$2("registerUser", t2), $async$_connect$0);
             case 3:
               // returning from await.
               $async$self._logger.log$4(C.Level_INFO_800, "registerUser success", null, null);
@@ -15123,18 +15161,35 @@
       try {
         t1 = _this._peer;
         t2 = "updateMessageStatus" + H.S(id);
+        t1._server.registerMethod$2(t2, _this.get$_forwardMessageUpdateStatus());
+      } catch (exception) {
+        H.unwrapException(exception);
+      }
+      try {
+        t1 = _this._peer;
+        t2 = "updateMessage" + H.S(id);
         t1._server.registerMethod$2(t2, _this.get$_forwardMessageUpdate());
       } catch (exception) {
         H.unwrapException(exception);
       }
     },
-    _forwardMessageUpdate$1: function(parameters) {
+    _forwardMessageUpdateStatus$1: function(parameters) {
       var t1;
       H.interceptedTypeCheck(parameters, "$isParameters");
       this._logger.log$4(C.Level_INFO_800, "updateMessageStatus " + H.S(parameters.get$value()), null, null);
       t1 = parameters.method;
       t1.toString;
       t1 = this._conversations.$index(0, H.stringReplaceAllUnchecked(t1, "updateMessageStatus", ""));
+      if (t1 != null)
+        t1._messageUpdate$1(H.assertSubtype(parameters.get$value(), "$isMap", [P.String, null], "$asMap"));
+    },
+    _forwardMessageUpdate$1: function(parameters) {
+      var t1;
+      H.interceptedTypeCheck(parameters, "$isParameters");
+      this._logger.log$4(C.Level_INFO_800, "updateMessage " + H.S(parameters.get$value()), null, null);
+      t1 = parameters.method;
+      t1.toString;
+      t1 = this._conversations.$index(0, H.stringReplaceAllUnchecked(t1, "updateMessage", ""));
       if (t1 != null)
         t1._messageUpdate$1(H.assertSubtype(parameters.get$value(), "$isMap", [P.String, null], "$asMap"));
     },
@@ -15610,7 +15665,7 @@
     call$1: function(parameters) {
       this.$this._logger.log$4(C.Level_INFO_800, "fallback ignored: " + H.S(H.interceptedTypeCheck(parameters, "$isParameters").get$value()), null, null);
     },
-    $signature: 53
+    $signature: 54
   };
   G.DalkSdk__connect_closure1.prototype = {
     call$1: function(parameters) {
@@ -15639,7 +15694,7 @@
       });
       return P._asyncStartSync($async$call$1, $async$completer);
     },
-    $signature: 54
+    $signature: 55
   };
   G.DalkSdk__connect_closure2.prototype = {
     call$1: function(conv) {
@@ -15649,13 +15704,13 @@
       conv._peer = t1._peer;
       t1._registerMethodForConversation$1(conv.id);
     },
-    $signature: 55
+    $signature: 56
   };
   G.DalkSdk__createConversationFromData_closure.prototype = {
     call$1: function(message) {
       return G._Message_fromBackend(H.assertSubtype(message, "$isMap", [P.String, null], "$asMap"));
     },
-    $signature: 23
+    $signature: 24
   };
   G.DalkSdk__createConversationFromData_closure0.prototype = {
     call$1: function(data) {
@@ -15675,21 +15730,21 @@
       this.$this._usersCache.$indexSet(0, user.id, user);
       return user;
     },
-    $signature: 57
+    $signature: 58
   };
   G.DalkSdk_createGroupConversation_closure0.prototype = {
     call$1: function(user) {
       H.interceptedTypeCheck(user, "$isUser");
       return user.id;
     },
-    $signature: 58
+    $signature: 59
   };
   G.DalkSdk_createGroupConversation_closure1.prototype = {
     call$1: function(user) {
       H.interceptedTypeCheck(user, "$isUser");
       return user.toJson$0();
     },
-    $signature: 59
+    $signature: 76
   };
   G.DalkSdk_getConversations_closure.prototype = {
     call$2: function(conv1, conv2) {
@@ -15702,7 +15757,7 @@
       t2 = C.JSArray_methods.get$last(conv1.messages).createdAt;
       return C.JSInt_methods.compareTo$1(t1._core$_value, t2._core$_value);
     },
-    $signature: 75
+    $signature: 61
   };
   G.ConnectionClosedException.prototype = {
     toString$0: function(_) {
@@ -15721,39 +15776,42 @@
     }
   };
   G.__$MessageCopyWithImpl.prototype = {
-    call$6$createdAt$id$senderId$status$statusDetails$text: function(createdAt, id, senderId, $status, statusDetails, text) {
+    call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt: function(createdAt, id, metadata, senderId, $status, statusDetails, text, updatedAt) {
       var _this = this,
         t1 = H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message"),
         t2 = J.$eq$(id, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").id : H.stringTypeCast(id),
         t3 = J.$eq$(senderId, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").senderId : H.stringTypeCast(senderId),
         t4 = J.$eq$(text, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").text : H.stringTypeCast(text),
         t5 = J.$eq$(createdAt, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").createdAt : H.interceptedTypeCast(createdAt, "$isDateTime"),
-        t6 = J.$eq$($status, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").status : H.interceptedTypeCast($status, "$isMessageStatus");
-      return _this._then.call$1(t1.copyWith$6$createdAt$id$senderId$status$statusDetails$text(t5, t2, t3, t6, J.$eq$(statusDetails, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").statusDetails : H.subtypeCast(statusDetails, "$isList", [G.UserMessageStatus], "$asList"), t4));
+        t6 = J.$eq$(updatedAt, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").updatedAt : H.interceptedTypeCast(updatedAt, "$isDateTime"),
+        t7 = J.$eq$($status, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").status : H.interceptedTypeCast($status, "$isMessageStatus"),
+        t8 = J.$eq$(statusDetails, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").statusDetails : H.subtypeCast(statusDetails, "$isList", [G.UserMessageStatus], "$asList");
+      return _this._then.call$1(t1.copyWith$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(t5, t2, J.$eq$(metadata, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").metadata : H.subtypeCast(metadata, "$isMap", [P.String, null], "$asMap"), t3, t7, t8, t4, t6));
     },
     call$0: function() {
-      return this.call$6$createdAt$id$senderId$status$statusDetails$text(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed);
+      return this.call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed);
     },
     call$1$status: function($status) {
-      return this.call$6$createdAt$id$senderId$status$statusDetails$text(C.C_Freezed, C.C_Freezed, C.C_Freezed, $status, C.C_Freezed, C.C_Freezed);
+      return this.call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, $status, C.C_Freezed, C.C_Freezed, C.C_Freezed);
     }
   };
   G.__$_MessageCopyWithImpl.prototype = {
-    call$6$createdAt$id$senderId$status$statusDetails$text: function(createdAt, id, senderId, $status, statusDetails, text) {
+    call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt: function(createdAt, id, metadata, senderId, $status, statusDetails, text, updatedAt) {
       var _this = this,
         t1 = J.$eq$(id, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").id : H.stringTypeCast(id),
         t2 = J.$eq$(senderId, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").senderId : H.stringTypeCast(senderId),
         t3 = J.$eq$(text, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").text : H.stringTypeCast(text),
         t4 = J.$eq$(createdAt, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").createdAt : H.interceptedTypeCast(createdAt, "$isDateTime"),
-        t5 = J.$eq$($status, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").status : H.interceptedTypeCast($status, "$isMessageStatus"),
-        t6 = J.$eq$(statusDetails, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").statusDetails : H.subtypeCast(statusDetails, "$isList", [G.UserMessageStatus], "$asList");
-      return _this._then.call$1(new G._$__Message(t1, t2, t3, t4, t5, t6));
+        t5 = J.$eq$(updatedAt, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").updatedAt : H.interceptedTypeCast(updatedAt, "$isDateTime"),
+        t6 = J.$eq$($status, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").status : H.interceptedTypeCast($status, "$isMessageStatus"),
+        t7 = J.$eq$(statusDetails, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").statusDetails : H.subtypeCast(statusDetails, "$isList", [G.UserMessageStatus], "$asList");
+      return _this._then.call$1(G._$__Message$(t1, t2, t3, t4, t5, t6, t7, J.$eq$(metadata, C.C_Freezed) ? H.interceptedTypeCast(_this._sdk_base$_value, "$is__Message").metadata : H.subtypeCast(metadata, "$isMap", [P.String, null], "$asMap")));
     },
     call$0: function() {
-      return this.call$6$createdAt$id$senderId$status$statusDetails$text(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed);
+      return this.call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed);
     },
     call$1$status: function($status) {
-      return this.call$6$createdAt$id$senderId$status$statusDetails$text(C.C_Freezed, C.C_Freezed, C.C_Freezed, $status, C.C_Freezed, C.C_Freezed);
+      return this.call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(C.C_Freezed, C.C_Freezed, C.C_Freezed, C.C_Freezed, $status, C.C_Freezed, C.C_Freezed, C.C_Freezed);
     }
   };
   G.__$_MessageCopyWithImpl_closure.prototype = {
@@ -15767,7 +15825,7 @@
   G._$__Message.prototype = {
     toString$0: function(_) {
       var _this = this;
-      return "_Message._(id: " + H.S(_this.id) + ", senderId: " + H.S(_this.senderId) + ", text: " + H.S(_this.text) + ", createdAt: " + H.S(_this.createdAt) + ", status: " + H.S(_this.status) + ", statusDetails: " + H.S(_this.statusDetails) + ")";
+      return "_Message._(id: " + H.S(_this.id) + ", senderId: " + H.S(_this.senderId) + ", text: " + H.S(_this.text) + ", createdAt: " + H.S(_this.createdAt) + ", updatedAt: " + H.S(_this.updatedAt) + ", status: " + H.S(_this.status) + ", statusDetails: " + H.S(_this.statusDetails) + ", metadata: " + H.S(_this.metadata) + ")";
     },
     $eq: function(_, other) {
       var t1, t2, _this = this;
@@ -15787,12 +15845,22 @@
                 t1 = other.createdAt;
                 t2 = _this.createdAt;
                 if (t1 == t2 || C.C_DeepCollectionEquality.equals$2(t1, t2)) {
-                  t1 = other.status;
-                  t2 = _this.status;
+                  t1 = other.updatedAt;
+                  t2 = _this.updatedAt;
                   if (t1 == t2 || C.C_DeepCollectionEquality.equals$2(t1, t2)) {
-                    t1 = other.statusDetails;
-                    t2 = _this.statusDetails;
-                    t1 = (t1 == null ? t2 == null : t1 === t2) || C.C_DeepCollectionEquality.equals$2(t1, t2);
+                    t1 = other.status;
+                    t2 = _this.status;
+                    if (t1 == t2 || C.C_DeepCollectionEquality.equals$2(t1, t2)) {
+                      t1 = other.statusDetails;
+                      t2 = _this.statusDetails;
+                      if ((t1 == null ? t2 == null : t1 === t2) || C.C_DeepCollectionEquality.equals$2(t1, t2)) {
+                        t1 = other.metadata;
+                        t2 = _this.metadata;
+                        t1 = t1 == t2 || C.C_DeepCollectionEquality.equals$2(t1, t2);
+                      } else
+                        t1 = false;
+                    } else
+                      t1 = false;
                   } else
                     t1 = false;
                 } else
@@ -15812,7 +15880,7 @@
     get$hashCode: function(_) {
       var _this = this,
         t1 = H.getRuntimeType(_this);
-      return (t1.get$hashCode(t1) ^ C.C_DeepCollectionEquality.hash$1(_this.id) ^ C.C_DeepCollectionEquality.hash$1(_this.senderId) ^ C.C_DeepCollectionEquality.hash$1(_this.text) ^ C.C_DeepCollectionEquality.hash$1(_this.createdAt) ^ C.C_DeepCollectionEquality.hash$1(_this.status) ^ C.C_DeepCollectionEquality.hash$1(_this.statusDetails)) >>> 0;
+      return (t1.get$hashCode(t1) ^ C.C_DeepCollectionEquality.hash$1(_this.id) ^ C.C_DeepCollectionEquality.hash$1(_this.senderId) ^ C.C_DeepCollectionEquality.hash$1(_this.text) ^ C.C_DeepCollectionEquality.hash$1(_this.createdAt) ^ C.C_DeepCollectionEquality.hash$1(_this.updatedAt) ^ C.C_DeepCollectionEquality.hash$1(_this.status) ^ C.C_DeepCollectionEquality.hash$1(_this.statusDetails) ^ C.C_DeepCollectionEquality.hash$1(_this.metadata)) >>> 0;
     },
     get$copyWith: function() {
       var t1 = G.__Message;
@@ -15824,8 +15892,8 @@
     copyWith$1$status: function(arg0) {
       return this.get$copyWith().call$1$status(arg0);
     },
-    copyWith$6$createdAt$id$senderId$status$statusDetails$text: function(arg0, arg1, arg2, arg3, arg4, arg5) {
-      return this.get$copyWith().call$6$createdAt$id$senderId$status$statusDetails$text(arg0, arg1, arg2, arg3, arg4, arg5);
+    copyWith$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt: function(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+      return this.get$copyWith().call$8$createdAt$id$metadata$senderId$status$statusDetails$text$updatedAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     }
   };
   G.__Message.prototype = {$isMessage: 1, $is_Message: 1};
@@ -16392,7 +16460,7 @@
       var _tryNext = this;
       return this.$call$body$Server__tryFallbacks__tryNext();
     },
-    $signature: 64
+    $signature: 65
   };
   B._RespondToFormatExceptionsTransformer.prototype = {
     bind$1: function(channel) {
@@ -16410,7 +16478,7 @@
       stream.toString;
       return new P._HandleErrorStream(new B._RespondToFormatExceptionsTransformer_bind__closure(this._box_0), null, stream, [H.getRuntimeTypeArgument(stream, "Stream", 0)]);
     },
-    $signature: 65
+    $signature: 66
   };
   B._RespondToFormatExceptionsTransformer_bind__closure.prototype = {
     call$1: function(error) {
@@ -16511,7 +16579,7 @@
         $parent._children.$indexSet(0, thisName, t1);
       return t1;
     },
-    $signature: 66
+    $signature: 67
   };
   M.Context.prototype = {
     absolute$7: function(_, part1, part2, part3, part4, part5, part6, part7) {
@@ -17186,7 +17254,7 @@
     call$1: function(trace) {
       return H.interceptedTypeCheck(trace, "$isTrace").get$frames();
     },
-    $signature: 70
+    $signature: 71
   };
   U.Chain_toString_closure0.prototype = {
     call$1: function(trace) {
@@ -17195,7 +17263,7 @@
         t3 = H.getTypeArgumentByIndex(t1, 0);
       return new H.MappedListIterable(t1, H.functionTypeCheck(new U.Chain_toString__closure0(), {func: 1, ret: t2, args: [t3]}), [t3, t2]).fold$1$2(0, 0, H.instantiate1(P.math__max$closure(), t2), t2);
     },
-    $signature: 71
+    $signature: 72
   };
   U.Chain_toString__closure0.prototype = {
     call$1: function(frame) {
@@ -17211,7 +17279,7 @@
         t3 = H.getTypeArgumentByIndex(t1, 0);
       return new H.MappedListIterable(t1, H.functionTypeCheck(new U.Chain_toString__closure(this.longest), {func: 1, ret: t2, args: [t3]}), [t3, t2]).join$0(0);
     },
-    $signature: 73
+    $signature: 74
   };
   U.Chain_toString__closure.prototype = {
     call$1: function(frame) {
@@ -17328,7 +17396,7 @@
         return H.ioore(t1, 3);
       return new A.Frame(t2, t3, P.int_parse(t1[3], _null, _null), member);
     },
-    $signature: 76
+    $signature: 77
   };
   A.Frame_Frame$parseFirefox_closure.prototype = {
     call$0: function() {
@@ -17705,7 +17773,7 @@
       H.assertSubtype(sink, "$isEventSink", [P.String], "$asEventSink");
       sink._stream_sink$_sink.add$1(0, H.assertSubtypeOfRuntimeType(C.C_JsonCodec.encode$2$toEncodable(data, null), H.getTypeArgumentByIndex(sink, 0)));
     },
-    $signature: 78
+    $signature: 79
   };
   B.StreamChannelController.prototype = {
     set$_local: function(_local) {
@@ -17796,14 +17864,14 @@
       data = !!J.getInterceptor$(copy).$isByteBuffer ? H.NativeUint8List_NativeUint8List$view(copy, 0, null) : copy;
       this.$this._html$_controller._local._guarantee_channel$_sink.add$1(0, data);
     },
-    $signature: 80
+    $signature: 81
   };
   R.HtmlWebSocketChannel_closure2.prototype = {
     call$1: function($event) {
       H.interceptedTypeCheck($event, "$isCloseEvent").reason;
       this.$this._html$_controller._local._guarantee_channel$_sink.close$0(0);
     },
-    $signature: 81
+    $signature: 82
   };
   R.HtmlWebSocketChannel__listen_closure.prototype = {
     call$1: function(message) {
@@ -17891,7 +17959,7 @@
       _instance = hunkHelpers.installInstanceTearOff,
       _instance_1_i = hunkHelpers._instance_1i,
       _instance_2_u = hunkHelpers._instance_2u;
-    _static_2(J, "_interceptors_JSArray__compareAny$closure", "JSArray__compareAny", 82);
+    _static_2(J, "_interceptors_JSArray__compareAny$closure", "JSArray__compareAny", 83);
     _instance_1_u(H.CastStreamSubscription.prototype, "get$__internal$_onData", "__internal$_onData$1", 10);
     _static_1(P, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 13);
     _static_1(P, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 13);
@@ -17921,30 +17989,31 @@
     _instance_0_u(_ = P._ForwardingStreamSubscription.prototype, "get$_onPause", "_onPause$0", 1);
     _instance_0_u(_, "get$_onResume", "_onResume$0", 1);
     _instance_1_u(_, "get$_async$_handleData", "_async$_handleData$1", 10);
-    _instance_2_u(_, "get$_async$_handleError", "_async$_handleError$2", 90);
+    _instance_2_u(_, "get$_async$_handleError", "_async$_handleError$2", 91);
     _instance_0_u(_, "get$_handleDone", "_handleDone$0", 1);
-    _static_2(P, "collection___defaultEquals$closure", "_defaultEquals", 84);
-    _static_1(P, "collection___defaultHashCode$closure", "_defaultHashCode", 85);
+    _static_2(P, "collection___defaultEquals$closure", "_defaultEquals", 85);
+    _static_1(P, "collection___defaultHashCode$closure", "_defaultHashCode", 86);
     _static(P, "convert__jsonDecode$closure", 1, function() {
       return {reviver: null};
     }, ["call$2$reviver", "call$1"], ["jsonDecode", function(source) {
       return P.jsonDecode(source, null);
-    }], 86, 0);
+    }], 87, 0);
     _static_1(P, "convert___defaultToEncodable$closure", "_defaultToEncodable", 8);
-    _static_1(P, "core__identityHashCode$closure", "identityHashCode", 87);
-    _static_2(P, "core__identical$closure", "identical", 88);
+    _static_1(P, "core__identityHashCode$closure", "identityHashCode", 88);
+    _static_2(P, "core__identical$closure", "identical", 89);
     _static_1(P, "core_Uri_decodeComponent$closure", "Uri_decodeComponent", 17);
     _static(G, "sdk_base___$identity$closure", 1, null, ["call$1$1", "call$1"], ["_$identity", function(value) {
       return G._$identity(value, null);
-    }], 89, 0);
-    _instance_0_u(_ = G.DalkSdk.prototype, "get$connect", "connect$0", 51);
-    _instance_1_u(_, "get$_forwardMessageUpdate", "_forwardMessageUpdate$1", 24);
-    _instance_1_u(_, "get$_forwardIncomingMessage", "_forwardIncomingMessage$1", 24);
+    }], 90, 0);
+    _instance_0_u(_ = G.DalkSdk.prototype, "get$connect", "connect$0", 52);
+    _instance_1_u(_, "get$_forwardMessageUpdateStatus", "_forwardMessageUpdateStatus$1", 19);
+    _instance_1_u(_, "get$_forwardMessageUpdate", "_forwardMessageUpdate$1", 19);
+    _instance_1_u(_, "get$_forwardIncomingMessage", "_forwardIncomingMessage$1", 19);
     _instance_1_u(_ = U.Client.prototype, "get$_handleResponse", "_handleResponse$1", 5);
     _instance_1_u(_, "get$_handleSingleResponse", "_handleSingleResponse$1", 5);
     _instance_1_u(_ = R.Server.prototype, "get$_handleRequest", "_handleRequest$1", 27);
     _instance_1_u(_, "get$_handleSingleRequest", "_handleSingleRequest$1", 27);
-    _instance_1_u(_, "get$_tryFallbacks", "_tryFallbacks$1", 63);
+    _instance_1_u(_, "get$_tryFallbacks", "_tryFallbacks$1", 64);
     _static(P, "math__max$closure", 2, null, ["call$1$2", "call$2"], ["max", function(a, b) {
       return P.max(a, b, P.num);
     }], 60, 0);
@@ -18036,7 +18105,7 @@
     _mixin(P._ListBase_Object_ListMixin, P.ListMixin);
     _mixin(P._UnmodifiableMapView_MapView__UnmodifiableMapMixin, P._UnmodifiableMapMixin);
   })();
-  var init = {mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List"}, mangledNames: {}, getTypeFromName: getGlobalFromName, metadata: [], types: [{func: 1, ret: P.Null}, {func: 1, ret: -1}, {func: 1, ret: P.Null, args: [,]}, {func: 1, ret: P.bool, args: [P.String]}, {func: 1, ret: P.Null, args: [,,]}, {func: 1, ret: -1, args: [,]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [-1]}, P.Function]}, {func: 1, ret: A.Frame, args: [P.String]}, {func: 1, args: [,]}, {func: 1, ret: A.Frame}, {func: 1, ret: -1, args: [P.Object]}, {func: 1, ret: P.bool, args: [G.Conversation]}, {func: 1, ret: P.bool, args: [G.Message]}, {func: 1, ret: -1, args: [{func: 1, ret: -1}]}, {func: 1, ret: -1, args: [P.Object], opt: [P.StackTrace]}, {func: 1, ret: P.bool, args: [,]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, ret: P.String, args: [P.String]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [P.Null]}, P.Function]}, {func: 1, ret: [F.Promise, -2], args: [P.String, P.String]}, {func: 1, ret: P.Null, args: [, P.StackTrace]}, {func: 1, ret: P.int, args: [P.String]}, {func: 1, ret: P.Null, args: [P.String]}, {func: 1, ret: G._Message, args: [,]}, {func: 1, ret: -1, args: [S.Parameters]}, {func: 1, ret: G.User, args: [,]}, {func: 1, ret: P.String, args: [,]}, {func: 1, ret: [P.Future,,], args: [,]}, {func: 1, ret: U.Chain}, {func: 1, ret: Y.Trace, args: [P.String]}, {func: 1, ret: P.int, args: [A.Frame]}, {func: 1, ret: P.String, args: [A.Frame]}, {func: 1, ret: P.Null, args: [W.Event]}, {func: 1, ret: G.DalkSdk, args: [,,,]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [[P.List,,]]}, P.Function]}, {func: 1, ret: P.Null, args: [[P.List, G.Conversation]]}, {func: 1, ret: [F.Promise, -2], args: [P.String]}, {func: 1, ret: P.Null, args: [P.String,,]}, {func: 1, ret: [F.Promise, -2], args: [G.User, P.String]}, {func: 1, ret: [F.Promise, -2], args: [[P.List, G.User], P.String, P.String, P.String]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1}]}, {func: 1, ret: P.Null, args: [P.Symbol0,,]}, {func: 1, ret: P.Null, args: [P.int,,]}, {func: 1, ret: -1, args: [-1]}, {func: 1, ret: [F.Promise, -2], args: [P.String, P.String, P.String]}, {func: 1, ret: G.User, args: [,,,]}, {func: 1, ret: G.UserMessageStatus, args: [,]}, {func: 1, ret: P.Null, args: [G.Message]}, {func: 1, args: [, P.String]}, {func: 1, ret: -1, args: [P.String, P.int]}, {func: 1, ret: [P.Future, -1]}, {func: 1, ret: -1, args: [P.String], opt: [,]}, {func: 1, ret: P.Null, args: [S.Parameters]}, {func: 1, ret: [P.Future, P.Null], args: [,]}, {func: 1, ret: P.Null, args: [G.Conversation]}, {func: 1, ret: P.int, args: [P.int, P.int]}, {func: 1, ret: G.User, args: [G.User]}, {func: 1, ret: P.String, args: [G.User]}, {func: 1, ret: [P.Map, P.String,,], args: [G.User]}, {func: 1, bounds: [P.num], ret: 0, args: [0, 0]}, {func: 1, ret: P.Null, args: [,], opt: [P.StackTrace]}, {func: 1, ret: [P._Future,,], args: [,]}, {func: 1, ret: [P.Future,,], args: [S.Parameters]}, {func: 1, ret: [P.Future,,]}, {func: 1, ret: [P.Stream,,], args: [[P.Stream,,]]}, {func: 1, ret: F.Logger}, {func: 1, ret: P.Uint8List, args: [P.int]}, {func: 1, ret: P.Uint8List, args: [,,]}, {func: 1, args: [W.Event]}, {func: 1, ret: [P.List, A.Frame], args: [Y.Trace]}, {func: 1, ret: P.int, args: [Y.Trace]}, {func: 1, args: [,,]}, {func: 1, ret: P.String, args: [Y.Trace]}, {func: 1, args: [P.String]}, {func: 1, ret: P.int, args: [G.Conversation, G.Conversation]}, {func: 1, ret: A.Frame, args: [,,]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.Null, args: [P.Object, [P.EventSink, P.String]]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [P.bool]}, P.Function]}, {func: 1, ret: P.Null, args: [W.MessageEvent]}, {func: 1, ret: P.Null, args: [W.CloseEvent]}, {func: 1, ret: P.int, args: [,,]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.bool, args: [,,]}, {func: 1, ret: P.int, args: [,]}, {func: 1, args: [P.String], named: {reviver: {func: 1, ret: P.Object, args: [P.Object, P.Object]}}}, {func: 1, ret: P.int, args: [P.Object]}, {func: 1, ret: P.bool, args: [P.Object, P.Object]}, {func: 1, bounds: [P.Object], ret: 0, args: [0]}, {func: 1, ret: -1, args: [, P.StackTrace]}], interceptorsByTag: null, leafTags: null};
+  var init = {mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List"}, mangledNames: {}, getTypeFromName: getGlobalFromName, metadata: [], types: [{func: 1, ret: P.Null}, {func: 1, ret: -1}, {func: 1, ret: P.Null, args: [,]}, {func: 1, ret: P.bool, args: [P.String]}, {func: 1, ret: P.Null, args: [,,]}, {func: 1, ret: -1, args: [,]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [-1]}, P.Function]}, {func: 1, ret: A.Frame, args: [P.String]}, {func: 1, args: [,]}, {func: 1, ret: A.Frame}, {func: 1, ret: -1, args: [P.Object]}, {func: 1, ret: P.bool, args: [G.Conversation]}, {func: 1, ret: P.bool, args: [G.Message]}, {func: 1, ret: -1, args: [{func: 1, ret: -1}]}, {func: 1, ret: -1, args: [P.Object], opt: [P.StackTrace]}, {func: 1, ret: P.bool, args: [,]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, ret: P.String, args: [P.String]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [P.Null]}, P.Function]}, {func: 1, ret: -1, args: [S.Parameters]}, {func: 1, ret: P.Null, args: [, P.StackTrace]}, {func: 1, ret: P.int, args: [P.String]}, {func: 1, ret: P.Null, args: [P.String]}, {func: 1, ret: [F.Promise, -2], args: [P.String, P.String]}, {func: 1, ret: G._Message, args: [,]}, {func: 1, ret: G.User, args: [,]}, {func: 1, ret: P.String, args: [,]}, {func: 1, ret: [P.Future,,], args: [,]}, {func: 1, ret: U.Chain}, {func: 1, ret: Y.Trace, args: [P.String]}, {func: 1, ret: P.int, args: [A.Frame]}, {func: 1, ret: P.String, args: [A.Frame]}, {func: 1, ret: P.Null, args: [W.Event]}, {func: 1, ret: G.DalkSdk, args: [,,,]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [[P.List,,]]}, P.Function]}, {func: 1, ret: P.Null, args: [[P.List, G.Conversation]]}, {func: 1, ret: [F.Promise, -2], args: [P.String]}, {func: 1, ret: P.Null, args: [P.String,,]}, {func: 1, ret: [F.Promise, -2], args: [G.User, P.String]}, {func: 1, ret: [F.Promise, -2], args: [[P.List, G.User], P.String, P.String, P.String]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1}]}, {func: 1, ret: [F.Promise, -2], args: [P.String, P.String, [P.Map, P.String,,]]}, {func: 1, ret: P.Null, args: [P.Symbol0,,]}, {func: 1, ret: P.Null, args: [P.int,,]}, {func: 1, ret: -1, args: [-1]}, {func: 1, ret: [F.Promise, -2], args: [P.String, P.String, P.String]}, {func: 1, ret: G.User, args: [,,,]}, {func: 1, ret: G.UserMessageStatus, args: [,]}, {func: 1, ret: P.Null, args: [G.Message]}, {func: 1, args: [, P.String]}, {func: 1, ret: -1, args: [P.String, P.int]}, {func: 1, ret: [P.Future, -1]}, {func: 1, ret: -1, args: [P.String], opt: [,]}, {func: 1, ret: P.Null, args: [S.Parameters]}, {func: 1, ret: [P.Future, P.Null], args: [,]}, {func: 1, ret: P.Null, args: [G.Conversation]}, {func: 1, ret: P.int, args: [P.int, P.int]}, {func: 1, ret: G.User, args: [G.User]}, {func: 1, ret: P.String, args: [G.User]}, {func: 1, bounds: [P.num], ret: 0, args: [0, 0]}, {func: 1, ret: P.int, args: [G.Conversation, G.Conversation]}, {func: 1, ret: P.Null, args: [,], opt: [P.StackTrace]}, {func: 1, ret: [P._Future,,], args: [,]}, {func: 1, ret: [P.Future,,], args: [S.Parameters]}, {func: 1, ret: [P.Future,,]}, {func: 1, ret: [P.Stream,,], args: [[P.Stream,,]]}, {func: 1, ret: F.Logger}, {func: 1, ret: P.Uint8List, args: [P.int]}, {func: 1, ret: P.Uint8List, args: [,,]}, {func: 1, args: [W.Event]}, {func: 1, ret: [P.List, A.Frame], args: [Y.Trace]}, {func: 1, ret: P.int, args: [Y.Trace]}, {func: 1, args: [,,]}, {func: 1, ret: P.String, args: [Y.Trace]}, {func: 1, args: [P.String]}, {func: 1, ret: [P.Map, P.String,,], args: [G.User]}, {func: 1, ret: A.Frame, args: [,,]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.Null, args: [P.Object, [P.EventSink, P.String]]}, {func: 1, ret: P.Null, args: [{func: 1, ret: -1, args: [P.bool]}, P.Function]}, {func: 1, ret: P.Null, args: [W.MessageEvent]}, {func: 1, ret: P.Null, args: [W.CloseEvent]}, {func: 1, ret: P.int, args: [,,]}, {func: 1, ret: [F.Promise, -2]}, {func: 1, ret: P.bool, args: [,,]}, {func: 1, ret: P.int, args: [,]}, {func: 1, args: [P.String], named: {reviver: {func: 1, ret: P.Object, args: [P.Object, P.Object]}}}, {func: 1, ret: P.int, args: [P.Object]}, {func: 1, ret: P.bool, args: [P.Object, P.Object]}, {func: 1, bounds: [P.Object], ret: 0, args: [0]}, {func: 1, ret: -1, args: [, P.StackTrace]}], interceptorsByTag: null, leafTags: null};
   (function constants() {
     var makeConstList = hunkHelpers.makeConstList;
     C.Interceptor_methods = J.Interceptor.prototype;

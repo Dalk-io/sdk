@@ -34,7 +34,7 @@ void main() {
             'id': 'messageId',
             'senderId': 'senderId',
             'text': 'text',
-            'timestamp': '2020-04-08T16:26:36.346841Z',
+            'createdAt': '2020-04-08T16:26:36.346841Z',
             'status': 'received',
             'statusDetails': [
               {
@@ -59,6 +59,67 @@ void main() {
     await sdk.disconnect();
   });
 
+  test('updateMessage should send data to Peer and dipatch message as ongoing', () async {
+    reset(peer);
+    when(peer.isClosed).thenReturn(false);
+
+    when(peer.sendRequest('updateMessage', any)).thenAnswer(
+          (realInvocation) => Future.value(
+        {
+          'id': 'messageId',
+          'senderId': 'senderId',
+          'text': 'message updated',
+          'metadata': {'test': true},
+          'createdAt': '2020-04-08T16:26:36.346841Z',
+          'updatedAt': '2020-04-08T16:26:36.346841Z',
+          'status': 'sent',
+          'statusDetails': [
+            {
+              'userId': 'id',
+              'status': 'sent',
+            },
+          ],
+        },
+      ),
+    );
+
+    var messageReceived = 0;
+    conversation.onMessagesEvent.take(2).listen(
+      expectAsync1((Message message) {
+        if (messageReceived == 0) {
+          expect(message.id, 'messageId');
+          expect(message.text, 'message updated');
+          expect(message.senderId, 'senderId');
+          expect(message.metadata, {'test': true});
+          expect(message.updatedAt, isNotNull);
+          expect(message.status, MessageStatus.ongoing);
+          expect(conversation.messages.length, 1);
+        } else {
+          expect(message.id, 'messageId');
+          expect(message.text, 'message updated');
+          expect(message.senderId, 'senderId');
+          expect(message.updatedAt, isNotNull);
+          expect(message.metadata, {'test': true});
+          expect(message.status, MessageStatus.sent);
+          expect(conversation.messages.length, 1); //still 1 message as the message should be update
+          expect(conversation.messages.first.id, 'messageId');
+        }
+        messageReceived++;
+      }, count: 2),
+    );
+
+    await conversation.updateMessage('messageId', message: 'message updated', metadata: {'test': true});
+
+    verify(peer.isClosed);
+    expect(verify(peer.sendRequest('updateMessage', captureAny)).captured.single, {
+      'messageId': 'messageId',
+      'text': 'message updated',
+      'metadata': {'test': true},
+    });
+
+    verifyNoMoreInteractions(peer);
+  });
+
   test('sendMessage should send data to Peer and dipatch message as ongoing', () async {
     reset(peer);
     when(peer.isClosed).thenReturn(false);
@@ -69,7 +130,7 @@ void main() {
           'id': 'myMessageId',
           'senderId': 'meId',
           'text': 'message',
-          'timestamp': '2020-04-08T16:26:36.346841Z',
+          'createdAt': '2020-04-08T16:26:36.346841Z',
           'status': 'sent',
           'statusDetails': [
             {
@@ -103,12 +164,70 @@ void main() {
           }, count: 2),
         );
 
-    await conversation.sendMessage('message');
+    await conversation.sendMessage(message: 'message');
 
     verify(peer.isClosed);
     expect(verify(peer.sendRequest('sendMessage', captureAny)).captured.single, {
       'conversationId': convId,
       'text': 'message',
+    });
+
+    verifyNoMoreInteractions(peer);
+  });
+
+  test('sendMessage metadata only should send data to Peer and dipatch message as ongoing', () async {
+    reset(peer);
+    when(peer.isClosed).thenReturn(false);
+
+    when(peer.sendRequest('sendMessage', any)).thenAnswer(
+          (realInvocation) => Future.value(
+        {
+          'id': 'myMessageId',
+          'senderId': 'meId',
+          'text': null,
+          'metadata': {'test': true},
+          'createdAt': '2020-04-08T16:26:36.346841Z',
+          'status': 'sent',
+          'statusDetails': [
+            {
+              'userId': 'id',
+              'status': 'sent',
+            },
+          ],
+        },
+      ),
+    );
+
+    var messageReceived = 0;
+    conversation.onMessagesEvent.take(2).listen(
+      expectAsync1((Message message) {
+        if (messageReceived == 0) {
+          expect(message.id, contains('temporary_'));
+          expect(message.text, isNull);
+          expect(message.metadata, {'test': true});
+          expect(message.senderId, 'meId');
+          expect(message.status, MessageStatus.ongoing);
+          expect(conversation.messages.length, 2);
+        } else {
+          expect(message.id, 'myMessageId');
+          expect(message.text, isNull);
+          expect(message.metadata, {'test': true});
+          expect(message.senderId, 'meId');
+          expect(message.status, MessageStatus.sent);
+          expect(conversation.messages.length, 2); //still 2 message as the temporary one is replaced
+          expect(conversation.messages.first.id, 'messageId');
+          expect(conversation.messages.last.id, 'myMessageId');
+        }
+        messageReceived++;
+      }, count: 2),
+    );
+
+    await conversation.sendMessage(metadata: {'test': true});
+
+    verify(peer.isClosed);
+    expect(verify(peer.sendRequest('sendMessage', captureAny)).captured.single, {
+      'conversationId': convId,
+      'metadata': {'test':true},
     });
 
     verifyNoMoreInteractions(peer);
@@ -167,14 +286,14 @@ void main() {
             'id': 'messageId',
             'senderId': 'senderId',
             'text': 'text',
-            'timestamp': '2020-04-08T16:26:36.346841Z',
+            'createdAt': '2020-04-08T16:26:36.346841Z',
             'status': 'sent',
           },
           {
             'id': 'myMessageId',
             'senderId': 'meId',
             'text': 'message',
-            'timestamp': '2020-04-08T16:26:36.346841Z',
+            'createdAt': '2020-04-08T16:26:36.346841Z',
             'status': 'sent',
           },
         ],
@@ -219,7 +338,7 @@ void main() {
           'id': 'myNewMessageId',
           'senderId': 'id',
           'text': 'message',
-          'timestamp': '2020-04-08T16:26:36.346841Z',
+          'createdAt': '2020-04-08T16:26:36.346841Z',
           'status': 'sent',
           'statusDetails': [
             {
@@ -235,6 +354,7 @@ void main() {
   test('updateMessageStatusConvId should trigger a new message event', () {
     final callback = verify(peer.registerMethod('updateMessageStatus$convId', captureAny)).captured.single;
     verify(peer.registerMethod('receiveMessage$convId', any));
+    verify(peer.registerMethod('updateMessage$convId', any));
 
     expect(conversation.messages.length, 1);
     expect(conversation.messages.first.status, MessageStatus.received);
@@ -256,7 +376,7 @@ void main() {
           'id': 'messageId',
           'senderId': 'id',
           'text': 'message',
-          'timestamp': '2020-04-08T16:26:36.346841Z',
+          'createdAt': '2020-04-08T16:26:36.346841Z',
           'status': 'seen',
           'statusDetails': [
             {
@@ -270,5 +390,49 @@ void main() {
     verifyNoMoreInteractions(peer);
     expect(conversation.messages.length, 1);
     expect(conversation.messages.first.status, MessageStatus.seen);
+  });
+
+  test('updateMessageConvId should trigger a new message event', () {
+    verify(peer.registerMethod('updateMessageStatus$convId', any));
+    verify(peer.registerMethod('receiveMessage$convId', any));
+    final callback = verify(peer.registerMethod('updateMessage$convId', captureAny)).captured.single;
+
+    expect(conversation.messages.length, 1);
+    expect(conversation.messages.first.status, MessageStatus.received);
+    expect(conversation.messages.first.text, 'text');
+
+    conversation.onMessagesEvent.take(1).listen(
+      expectAsync1((Message message) {
+        expect(message.id, 'messageId');
+        expect(message.text, 'message updated');
+        expect(message.senderId, 'id');
+        expect(message.status, MessageStatus.seen);
+        expect(conversation.messages.length, 1);
+      }),
+    );
+
+    callback(
+      Parameters(
+        'updateMessage$convId',
+        {
+          'id': 'messageId',
+          'senderId': 'id',
+          'text': 'message updated',
+          'createdAt': '2020-04-08T16:26:36.346841Z',
+          'updatedAt': '2020-04-08T16:26:36.346841Z',
+          'status': 'seen',
+          'statusDetails': [
+            {
+              'userId': 'id',
+              'status': 'seen',
+            },
+          ],
+        },
+      ),
+    );
+    verifyNoMoreInteractions(peer);
+    expect(conversation.messages.length, 1);
+    expect(conversation.messages.first.status, MessageStatus.seen);
+    expect(conversation.messages.first.text, 'message updated');
   });
 }
