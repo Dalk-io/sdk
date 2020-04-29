@@ -128,7 +128,10 @@ class DalkSdk {
       }
     };
 
-    _peer.listen().then((value) => retry()).catchError((err, stack) {
+    _peer.listen().then((value) {
+      _connectionRetries = 0;
+      return retry();
+    }).catchError((err, stack) {
       retry();
       if (!completer.isCompleted) {
         _logger.severe('Can\'t connect to server with $err', err, stack);

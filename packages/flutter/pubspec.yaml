@@ -1,8 +1,10 @@
 name: flutter_dalk_sdk
 description: A new Flutter package project.
 version: 0.0.1
-author:
-homepage:
+documentation: https://dalk.io/doc/api/
+issue_tracker: https://github.com/Dalk-io/sdk/issues
+repository: https://github.com/Dalk-io/sdk/packages/flutter
+homepage: https://dalk.io
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -14,6 +16,7 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  pedantic: ^1.8.0+1
   build_runner:
   flutter_test:
     sdk: flutter
