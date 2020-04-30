@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "425924229535",
+    "firebase_url": "https://talk-dart-demo-461cd.firebaseio.com",
+    "project_id": "talk-dart-demo-461cd",
+    "storage_bucket": "talk-dart-demo-461cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425924229535:android:fcb6cf073b45d9e34d65aa",
+        "android_client_info": {
+          "package_name": "com.dalk.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425924229535-f9h8rf9017s0bvqnd0jubjgntuihov3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dalk.demo",
+            "certificate_hash": "62e5a06d15d196fc52fd459e24f9cb8c632afefa"
+          }
+        },
+        {
+          "client_id": "425924229535-oo40g1rahibn3pdr1ogijjfqeobj2jgp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dalk.demo",
+            "certificate_hash": "8f9d6e1f5dd2f8f4a6889d09e0cc5e9bbf08d1d5"
+          }
+        },
+        {
+          "client_id": "425924229535-snrcuh9j2cnhv5cre5devtoqdfdq060r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnVtDQEcr3sAUJkcNJoUBHi8k6f1ksxeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425924229535-snrcuh9j2cnhv5cre5devtoqdfdq060r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "425924229535-g4orja5in4dcg2b3b5ee0jslijh0na96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.dalk.demoapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425924229535:android:8e590e142d1d8f114d65aa",
+        "android_client_info": {
+          "package_name": "io.dalk.demoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425924229535-snrcuh9j2cnhv5cre5devtoqdfdq060r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnVtDQEcr3sAUJkcNJoUBHi8k6f1ksxeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425924229535-snrcuh9j2cnhv5cre5devtoqdfdq060r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "425924229535-g4orja5in4dcg2b3b5ee0jslijh0na96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.dalk.demoapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
