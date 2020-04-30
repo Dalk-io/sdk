@@ -87,7 +87,28 @@ class ConversationListView extends HookWidget {
   }
 }
 
-class OneToOneListTile extends StatelessWidget with AvatarBuilder {
+mixin _ConversationListTile {
+  Widget getSubtitle(Conversation conversation) {
+    return conversation.messages.isEmpty
+        ? null
+        : StreamBuilder(
+      stream: conversation.onMessagesEvent,
+      builder: (context, snapshot) {
+        final message = conversation.messages.last;
+        return Text(
+          message.text,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+              fontWeight:
+              (message.senderId != conversation.currentUser.id && message.status != MessageStatus.seen) ? FontWeight.bold : FontWeight.normal),
+        );
+      },
+    );
+  }
+}
+
+class OneToOneListTile extends StatelessWidget with AvatarBuilder, _ConversationListTile {
   final Conversation conversation;
   final bool isSelected;
   final void Function(Conversation conversation) onTap;
@@ -100,6 +121,7 @@ class OneToOneListTile extends StatelessWidget with AvatarBuilder {
       selected: isSelected,
       leading: getAvatar(conversation.partner),
       title: Text(conversation.title),
+      subtitle: getSubtitle(conversation),
       onTap: () {
         onTap(conversation);
       },
@@ -107,7 +129,7 @@ class OneToOneListTile extends StatelessWidget with AvatarBuilder {
   }
 }
 
-class GroupListTile extends StatelessWidget {
+class GroupListTile extends StatelessWidget with _ConversationListTile {
   final Conversation conversation;
   final bool isSelected;
   final void Function(Conversation conversation) onTap;
@@ -124,6 +146,7 @@ class GroupListTile extends StatelessWidget {
               child: Image.network(conversation.avatar),
             ),
       title: Text(conversation.title),
+      subtitle: getSubtitle(conversation),
       onTap: () {
         onTap(conversation);
       },

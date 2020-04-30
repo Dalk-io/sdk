@@ -121,7 +121,7 @@ class _Form extends StatelessWidget {
       children: <Widget>[
         Text(
           'Login or register using your Google account',
-          style: Theme.of(context).textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
+          style: Theme.of(context).textTheme.subtitle.copyWith(fontStyle: FontStyle.italic),
           textAlign: TextAlign.center,
         ),
         SleekPadding.normal(),

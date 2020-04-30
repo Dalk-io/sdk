@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
+import 'package:dalk/app.dart';
 import 'package:dalk/remote_config/remote_config_interface.dart';
 import 'package:dalk_sdk/sdk.dart';
 import 'package:mobx/mobx.dart';
@@ -49,15 +50,22 @@ abstract class _DalkStore with Store {
       await remoteConfig.fetch(expiration: Duration(seconds: 10));
       await remoteConfig.activateFetched();
 
-      final secret = remoteConfig.getString('projectSecret');
+      var prefix = '';
+      if (Flavor.current.env == Env.staging) {
+        prefix = 'staging_';
+      }
+
+      final secret = remoteConfig.getString('${prefix}projectSecret');
       final _signature = sha512.convert(utf8.encode('$id$secret')).toString();
 
       if (secret == null) {
         throw Exception('remote config not setup');
       }
 
-      dalkSdk = DalkSdk(remoteConfig.getString('projectId'), me, signature: _signature);
-
+      dalkSdk = DalkSdk(remoteConfig.getString('${prefix}projectId'), me, signature: _signature);
+      if (Flavor.current.env == Env.staging) {
+        dalkSdk.enableDevMode();
+      }
       users.add(me);
 
       _firestoreSubscription = Firestore.instance.collection('users').snapshots().listen(
