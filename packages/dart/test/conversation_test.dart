@@ -112,7 +112,7 @@ void main() {
 
     verify(peer.isClosed);
     expect(verify(peer.sendRequest('updateMessage', captureAny)).captured.single, {
-      'messageId': 'messageId',
+      'id': 'messageId',
       'text': 'message updated',
       'metadata': {'test': true},
     });

@@ -66,6 +66,11 @@ class UserMessageStatus {
       _statusFromBackend(data['status']),
     );
   }
+
+  @override
+  String toString() {
+    return 'UserMessageStatus{userId: $userId, status: $status}';
+  }
 }
 
 /// Message object representation
@@ -428,7 +433,7 @@ class _ConversationImpl implements Conversation {
       messages[existingIndex] = temporaryMessage;
       _messageEvent.add(temporaryMessage);
       final result = await _peer.sendRequest('updateMessage', {
-        'messageId': id,
+        'id': id,
         if (message != null) 'text': message,
         if (metadata != null) 'metadata': metadata,
       });

@@ -162,8 +162,8 @@ class DalkSdk {
 
   Future<void> _connect() async {
     if (!_isMocked) {
-      final scheme = _isDevMode ? 'ws' : 'wss';
-      final host = _isDevMode ? 'dev.api.dalk.io' : 'api.dalk.io';
+      final scheme = _isDevMode ? 'wss' : 'wss';
+      final host = _isDevMode ? 'staging.api.dalk.io' : 'api.dalk.io';
       final port = _isDevMode ? 443 : null;
 
       final uri = Uri(
