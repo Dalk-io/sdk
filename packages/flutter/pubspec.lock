@@ -154,7 +154,7 @@ packages:
       path: "../dart"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.4"
   dart_style:
     dependency: transitive
     description:
@@ -313,7 +313,7 @@ packages:
     source: hosted
     version: "1.6.4"
   pedantic:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: pedantic
       url: "https://pub.dartlang.org"

@@ -1,3 +1,8 @@
+## 0.0.5
+
+- add metadata support for message
+- add message update capabilities
+
 ## 0.0.4
 
 - fix connection without avatar

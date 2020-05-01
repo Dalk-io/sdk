@@ -171,7 +171,7 @@ void main() {
               'id': 'messageId',
               'senderId': 'senderId',
               'text': 'text',
-              'timestamp': '2020-04-08T16:26:36.346841Z',
+              'createdAt': '2020-04-08T16:26:36.346841Z',
               'status': 'received',
               'statusDetails': [
                 {
@@ -237,7 +237,7 @@ void main() {
             'id': 'messageId',
             'senderId': 'senderId',
             'text': 'text',
-            'timestamp': '2020-04-08T16:26:36.346841Z',
+            'createdAt': '2020-04-08T16:26:36.346841Z',
             'status': 'received',
             'statusDetails': [
               {

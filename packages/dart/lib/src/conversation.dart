@@ -86,11 +86,17 @@ abstract class Message {
   /// date when the message was created
   DateTime get createdAt;
 
+  /// date when the message was updated, null if never updated
+  DateTime get updatedAt;
+
   /// status of the message
   MessageStatus get status;
 
   /// contains the status of the message specific to each users in the conversation
   List<UserMessageStatus> get statusDetails;
+
+  /// contains custom metadata you need related to a message, empty by default
+  Map<String, dynamic> get metadata;
 }
 
 @freezed
@@ -98,10 +104,12 @@ abstract class _Message with _$_Message implements Message {
   const factory _Message._(
     String id,
     String senderId,
-    String text,
+    @nullable String text,
     DateTime createdAt,
+    @nullable DateTime updatedAt,
     MessageStatus status,
     List<UserMessageStatus> statusDetails,
+    Map<String, dynamic> metadata,
   ) = __Message;
 
   static _Message fromBackend(Map<String, dynamic> data) {
@@ -110,9 +118,11 @@ abstract class _Message with _$_Message implements Message {
       data['id'],
       data['senderId'],
       data['text'],
-      DateTime.parse(data['timestamp']),
+      DateTime.parse(data['createdAt']),
+      data['updatedAt'] == null ? null : DateTime.parse(data['updatedAt']),
       _statusFromBackend(data['status']),
       userStatus,
+      data['metadata'] ?? {},
     );
   }
 }
@@ -175,12 +185,25 @@ abstract class Conversation {
   /// This method let you send a message to the current conversation
   /// It will trigger some events in [onMessagesEvent]
   ///
-  /// [message] is the text to send
+  /// [message] is the text to send, optional
+  /// [metadata] is the custom data you can associate to this message, optional
   ///
   /// Throws [ServerException] if something went wrong server side
   ///
   /// Throws [ConnectionClosedException] if sdk is no more connected to the server
-  Future<void> sendMessage(String message);
+  Future<void> sendMessage({String message, Map<String, dynamic> metadata});
+
+  /// This method let you update a sent message on the current conversation
+  /// It will trigger some events in [onMessagesEvent]
+  ///
+  /// [id] is the message identifier to update, required
+  /// [message] is the text to send, optional, can be updated only by his sender
+  /// [metadata] is the custom data you can associate to this message, optional, can be updated by all participants
+  ///
+  /// Throws [ServerException] if something went wrong server side
+  ///
+  /// Throws [ConnectionClosedException] if sdk is no more connected to the server
+  Future<void> updateMessage(String id, {String message, Map<String, dynamic> metadata});
 
   /// This method let you notify the server that the message as been seen by the user
   ///
@@ -360,18 +383,57 @@ class _ConversationImpl implements Conversation {
   }
 
   @override
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage({String message, Map<String, dynamic> metadata}) async {
     if (_peer.isClosed) {
       throw ConnectionClosedException._();
     }
     try {
       final date = DateTime.now();
-      final messageData = _Message._('temporary_${date.millisecondsSinceEpoch}', currentUser.id, message, date, MessageStatus.ongoing, []);
+      final messageData =
+          _Message._('temporary_${date.millisecondsSinceEpoch}', currentUser.id, message, date, null, MessageStatus.ongoing, [], metadata ?? {});
       messages.add(messageData);
       _messageEvent.add(messageData);
-      final result = await _peer.sendRequest('sendMessage', {'conversationId': id, 'text': message});
+      final result = await _peer.sendRequest('sendMessage', {
+        'conversationId': id,
+        if (message != null) 'text': message,
+        if (metadata != null) 'metadata': metadata,
+      });
       _logger.info('sendMessage result $result');
       final existingIndex = messages.indexWhere((m) => m.id == messageData.id);
+      messages[existingIndex] = _Message.fromBackend(result);
+      _messageEvent.add(messages[existingIndex]);
+    } on RpcException catch (ex, stack) {
+      _logger.severe('$ex', ex, stack);
+      throw ServerException._('SERVER_ERROR_${ex.code}', ex.message, ex.data);
+    }
+  }
+
+  @override
+  Future<void> updateMessage(String id, {String message, Map<String, dynamic> metadata}) async {
+    if (_peer.isClosed) {
+      throw ConnectionClosedException._();
+    }
+    try {
+      final existingIndex = messages.indexWhere((m) => m.id == id);
+      if (existingIndex == -1) {
+        return;
+      }
+      final date = DateTime.now();
+      final temporaryMessage = (messages[existingIndex] as _Message).copyWith(
+        text: message,
+        metadata: metadata ?? {},
+        status: MessageStatus.ongoing,
+        updatedAt: date,
+      );
+      messages[existingIndex] = temporaryMessage;
+      _messageEvent.add(temporaryMessage);
+      final result = await _peer.sendRequest('updateMessage', {
+        'messageId': id,
+        if (message != null) 'text': message,
+        if (metadata != null) 'metadata': metadata,
+      });
+      _logger.info('updateMessage result $result');
+
       messages[existingIndex] = _Message.fromBackend(result);
       _messageEvent.add(messages[existingIndex]);
     } on RpcException catch (ex, stack) {
