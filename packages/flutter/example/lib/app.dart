@@ -11,14 +11,15 @@ import 'package:provider/provider.dart';
 import 'package:sleek_spacing/sleek_spacing.dart';
 
 enum Env {
-  prod, staging,
+  prod, staging, dev,
 }
 
 class Flavor {
   static Flavor current;
   final Env env;
+  final String prefix;
 
-  Flavor(this.env);
+  Flavor(this.env, this.prefix);
 }
 
 void launch() {

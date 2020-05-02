@@ -1,5 +1,5 @@
+/// Dalk SDK flutter package to manage realtime chat easily with pre-made UI components.
+/// {@category Flutter Dalk SDK}
 library flutter_dalk_sdk;
-
-export 'package:dalk_sdk/sdk.dart';
 
 export 'src/flutter_dalk_sdk.dart';
