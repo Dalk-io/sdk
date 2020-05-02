@@ -50,10 +50,7 @@ abstract class _DalkStore with Store {
       await remoteConfig.fetch(expiration: Duration(seconds: 10));
       await remoteConfig.activateFetched();
 
-      var prefix = '';
-      if (Flavor.current.env == Env.staging) {
-        prefix = 'staging_';
-      }
+      final prefix = Flavor.current.prefix;
 
       final secret = remoteConfig.getString('${prefix}projectSecret');
       final _signature = sha512.convert(utf8.encode('$id$secret')).toString();
@@ -64,6 +61,9 @@ abstract class _DalkStore with Store {
 
       dalkSdk = DalkSdk(remoteConfig.getString('${prefix}projectId'), me, signature: _signature);
       if (Flavor.current.env == Env.staging) {
+        dalkSdk.enableDevMode();
+      }
+      if (Flavor.current.env == Env.dev) {
         dalkSdk.enableDevMode();
       }
       users.add(me);

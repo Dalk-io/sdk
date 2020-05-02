@@ -55,6 +55,10 @@ class User {
   }
 }
 
+enum _EnvMode {
+  dev, staging, prod
+}
+
 /// Dalk Sdk class that allow you to manage a chat for a user.
 class DalkSdk {
   /// Project id on your Dalk account, check it to get it
@@ -82,7 +86,7 @@ class DalkSdk {
 
   final Map<String, User> _usersCache = {};
   final Map<String, Conversation> _conversations = {};
-  bool _isDevMode = false;
+  _EnvMode _envMode = _EnvMode.prod;
   bool _isMocked = false;
   int _connectionRetries = 0;
   final int _maxConnectionRetries = 20;
@@ -115,7 +119,12 @@ class DalkSdk {
 
   /// @nodoc
   void enableDevMode() {
-    _isDevMode = true;
+    _envMode = _EnvMode.dev;
+  }
+
+  /// @nodoc
+  void enableStagingMode() {
+    _envMode = _EnvMode.staging;
   }
 
   Future<void> _connectAndReconnect() {
@@ -162,9 +171,9 @@ class DalkSdk {
 
   Future<void> _connect() async {
     if (!_isMocked) {
-      final scheme = _isDevMode ? 'wss' : 'wss';
-      final host = _isDevMode ? 'staging.api.dalk.io' : 'api.dalk.io';
-      final port = _isDevMode ? 443 : null;
+      final scheme = _envMode == _EnvMode.dev ? 'ws' : 'wss';
+      final host = _envMode == _EnvMode.dev ? 'dev.api.dalk.io' : (_envMode == _EnvMode.staging ? 'staging.api.dalk.io' : 'api.dalk.io');
+      final port = _envMode == _EnvMode.dev ? 443 : null;
 
       final uri = Uri(
         scheme: scheme,
