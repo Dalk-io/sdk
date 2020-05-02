@@ -1,3 +1,7 @@
+## 0.0.6
+
+- fix pubspec info
+
 ## 0.0.5
 
 - add metadata support for message
