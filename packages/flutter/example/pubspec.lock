@@ -182,7 +182,7 @@ packages:
       path: "../../dart"
       relative: true
     source: path
-    version: "0.0.5"
+    version: "0.0.6"
   dart_style:
     dependency: transitive
     description:
@@ -307,6 +307,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.4"
+  flutter_portal:
+    dependency: "direct main"
+    description:
+      name: flutter_portal
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+2"
   flutter_test:
     dependency: "direct dev"
     description: flutter

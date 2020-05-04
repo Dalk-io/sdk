@@ -61,7 +61,7 @@ abstract class _DalkStore with Store {
 
       dalkSdk = DalkSdk(remoteConfig.getString('${prefix}projectId'), me, signature: _signature);
       if (Flavor.current.env == Env.staging) {
-        dalkSdk.enableDevMode();
+        dalkSdk.enableStagingMode();
       }
       if (Flavor.current.env == Env.dev) {
         dalkSdk.enableDevMode();

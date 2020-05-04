@@ -2,6 +2,8 @@
 
 This is a demo application of [dalk.io](https://dalk.io) SDK use under a Flutter application, it will show you how to build a real time chat application.
 
+This is a usage of the UI SDK to build chat with pre build component. To do your own UI use our raw SDK, check [this example](https://github.com/Dalk-io/sdk/tree/master/packages/dart/example/flutter)
+
 To run this demo, you'll need to set up firebase as we're using it to :
 
 - manage our project credentials on firebase remote config to not have secret hard coded in the app
