@@ -124,7 +124,7 @@ class _Form extends StatelessWidget {
           'Login or register using your Google account',
           style: Theme.of(context)
               .textTheme
-              .subtitle
+              .bodyText1
               .copyWith(fontStyle: FontStyle.italic),
           textAlign: TextAlign.center,
         ),
