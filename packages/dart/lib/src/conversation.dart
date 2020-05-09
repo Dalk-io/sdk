@@ -256,6 +256,7 @@ class _ConversationImpl implements Conversation {
   final StreamController<Message> _messageEvent = StreamController.broadcast();
   final bool _isGroup;
   Peer _peer;
+  final Function() _onSendMessage;
 
   _ConversationImpl._({
     @required this.id,
@@ -267,11 +268,13 @@ class _ConversationImpl implements Conversation {
     bool isGroup,
     String subject,
     String avatar,
+    Function() onSendMessage,
     Logger logger,
   })  : this.messages = messages ?? [],
         _isGroup = isGroup,
         _subject = subject,
         _logger = logger,
+        _onSendMessage = onSendMessage,
         _avatar = avatar {
     this.admins.addAll(admins);
     _resetPeer(peer);
@@ -338,7 +341,7 @@ class _ConversationImpl implements Conversation {
     _messageEvent.add(message);
   }
 
-  void _incomingMessage(Map<String, dynamic> data) async {
+  Future<void> _incomingMessage(Map<String, dynamic> data) async {
     var message = _Message.fromBackend(data);
     if (message.status == MessageStatus.sent) {
       await _setMessageStatus(message.id, MessageStatus.received).catchError((err, stack) {
@@ -407,6 +410,7 @@ class _ConversationImpl implements Conversation {
       final existingIndex = messages.indexWhere((m) => m.id == messageData.id);
       messages[existingIndex] = _Message.fromBackend(result);
       _messageEvent.add(messages[existingIndex]);
+      _onSendMessage();
     } on RpcException catch (ex, stack) {
       _logger.severe('$ex', ex, stack);
       throw ServerException._('SERVER_ERROR_${ex.code}', ex.message, ex.data);

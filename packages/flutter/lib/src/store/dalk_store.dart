@@ -26,7 +26,7 @@ abstract class _DalkStore with Store {
   @observable
   ObservableList<Conversation> lastFetchedConversations;
 
-  StreamSubscription _newConversationSubscription;
+  StreamSubscription _conversationsEventsSubscription;
 
   _DalkStore();
 
@@ -54,28 +54,24 @@ abstract class _DalkStore with Store {
       currentConversation = null;
       _client = sdk;
     }
-    _newConversationSubscription?.cancel();
-    _newConversationSubscription = _client.newConversation.listen((conversation) {
-      if (lastFetchedConversations == null) {
-        lastFetchedConversations = ObservableList.of([conversation]);
-      } else if (lastFetchedConversations.firstWhere((conv) => conv.id == conversation.id, orElse: () => null) == null) {
-        lastFetchedConversations.add(conversation);
-      }
+    _conversationsEventsSubscription?.cancel();
+    _conversationsEventsSubscription = _client.conversationsEvents.listen((_) async {
+        lastFetchedConversations = ObservableList.of(await sdk.getConversations());
     });
   }
 
   void dispose() {
-    _newConversationSubscription?.cancel();
+    _conversationsEventsSubscription?.cancel();
   }
 
   @action
-  Future<void> fetchConversations() => conversationsLoadState = ObservableFuture(_fetchConversations());
+  Future<void> fetchConversations({bool force = false}) => conversationsLoadState = ObservableFuture(_fetchConversations(force:force));
 
   @action
   Future<void> fetchMessages(String conversationId) => currentConversationLoadState = ObservableFuture(_fetchMessages(conversationId));
 
-  Future<void> _fetchConversations() async {
-    final result = await _client.getConversations();
+  Future<void> _fetchConversations({bool force = false}) async {
+    final result = await _client.getConversations(force: force);
     lastFetchedConversations = ObservableList.of(result);
   }
 

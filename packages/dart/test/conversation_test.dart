@@ -59,7 +59,7 @@ void main() {
     await sdk.disconnect();
   });
 
-  test('updateMessage should send data to Peer and dipatch message as ongoing', () async {
+  test('updateMessage should send data to Peer and dispatch message as ongoing', () async {
     reset(peer);
     when(peer.isClosed).thenReturn(false);
 
@@ -124,6 +124,10 @@ void main() {
     reset(peer);
     when(peer.isClosed).thenReturn(false);
 
+    sdk.conversationsEvents.take(1).listen(expectAsync1((_) {
+      //all good if received
+    }));
+
     when(peer.sendRequest('sendMessage', any)).thenAnswer(
       (realInvocation) => Future.value(
         {
@@ -175,9 +179,13 @@ void main() {
     verifyNoMoreInteractions(peer);
   });
 
-  test('sendMessage metadata only should send data to Peer and dipatch message as ongoing', () async {
+  test('sendMessage metadata only should send data to Peer and dispatch message as ongoing', () async {
     reset(peer);
     when(peer.isClosed).thenReturn(false);
+
+    sdk.conversationsEvents.take(1).listen(expectAsync1((_) {
+      //all good if received
+    }));
 
     when(peer.sendRequest('sendMessage', any)).thenAnswer(
           (realInvocation) => Future.value(
@@ -318,6 +326,10 @@ void main() {
     final callback = verify(peer.registerMethod('receiveMessage$convId', captureAny)).captured.single;
     when(peer.sendRequest('updateMessageStatus', {'id': 'myNewMessageId', 'status': 'received'})).thenAnswer((_) => Future.value(null));
     expect(conversation.messages.length, 1);
+
+    sdk.conversationsEvents.take(1).listen(expectAsync1((_) {
+      //all good if received
+    }));
 
     conversation.onMessagesEvent.take(1).listen(
       expectAsync1((Message message) {

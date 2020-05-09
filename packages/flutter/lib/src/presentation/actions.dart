@@ -4,8 +4,10 @@ enum ActionButtonLocation { left, center, right }
 
 class _PopupChat extends StatelessWidget {
   final List<Widget> actions;
+  final List<User> users;
+  final String conversationId;
 
-  const _PopupChat({Key key, this.actions = const []}) : super(key: key);
+  const _PopupChat({Key key, this.actions = const [], this.users, this.conversationId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

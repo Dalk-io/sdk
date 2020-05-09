@@ -54,6 +54,10 @@ void main() {
 
     final callback = verify(peer.registerMethod('onConversationCreated', captureAny)).captured.single;
 
+    sdk.conversationsEvents.take(1).listen(expectAsync1((_) {
+      //all good
+    }));
+
     callback(Parameters('onConversationCreated', {
       'id': 'test',
       'users': [me.toJson(), other.toJson()],

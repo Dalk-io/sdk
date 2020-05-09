@@ -50,10 +50,12 @@ class ConversationListView extends HookWidget {
               final conv = store.lastFetchedConversations[index];
               return conv.isOneToOne
                   ? OneToOneListTile(
+                key: ValueKey(conv.id),
                 conversation: conv,
                 onTap: onTap,
               )
                   : GroupListTile(
+                key: ValueKey(conv.id),
                 conversation: conv,
                 onTap: onTap,
               );
@@ -65,7 +67,7 @@ class ConversationListView extends HookWidget {
             hasNext: false,
             separatorBuilder: (context, index) => Divider(height: 1),
           ),
-          onRefresh: () => store.fetchConversations(),
+          onRefresh: () => store.fetchConversations(force: true),
         );
       },
     );
