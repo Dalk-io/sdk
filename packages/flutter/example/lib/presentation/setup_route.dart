@@ -28,7 +28,8 @@ class SetupScreen extends HookWidget {
             loginStore.firebaseUser.photoUrl,
           );
         }, onSuccess: () {
-          Navigator.of(context)?.pushReplacementNamed(ConversationsScreen.route);
+          Navigator.of(context)
+              ?.pushReplacementNamed(ConversationsScreen.route);
         }, onFailure: (ex, stack) {
           print('not logged');
           print(ex);
@@ -121,7 +122,10 @@ class _Form extends StatelessWidget {
       children: <Widget>[
         Text(
           'Login or register using your Google account',
-          style: Theme.of(context).textTheme.subtitle.copyWith(fontStyle: FontStyle.italic),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontStyle: FontStyle.italic),
           textAlign: TextAlign.center,
         ),
         SleekPadding.normal(),
@@ -135,7 +139,15 @@ class _Form extends StatelessWidget {
                 loginStore.firebaseUser.photoUrl,
               );
             }, onSuccess: () {
-              Navigator.of(context)?.pushReplacementNamed(ConversationsScreen.route);
+              Navigator.of(context)
+                  ?.pushReplacementNamed(ConversationsScreen.route);
+            }, onFailure: (err, stack) {
+              if (err.toString().contains('[object Object')) {
+                showErrorDialog(
+                    context, 'Popup are blocked by the browser, please allow them to sign-in');
+              } else {
+                showErrorDialog(context, err.toString());
+              }
             });
           },
         ),

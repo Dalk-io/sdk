@@ -1,4 +1,4 @@
-A SDK to add a real time chat easily.
+An SDK to add a real time chat easily.
 
 ## Features
 

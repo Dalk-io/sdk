@@ -122,10 +122,10 @@ mixin _$DalkStore on _DalkStore, Store {
   }
 
   @override
-  Future<void> fetchConversations() {
+  Future<void> fetchConversations({bool force = false}) {
     final _$actionInfo = _$_DalkStoreActionController.startAction();
     try {
-      return super.fetchConversations();
+      return super.fetchConversations(force: force);
     } finally {
       _$_DalkStoreActionController.endAction(_$actionInfo);
     }

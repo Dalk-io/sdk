@@ -1,5 +1,6 @@
 import 'package:dalk_sdk/sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dalk_sdk/src/utils/localization.dart';
 
 extension ConversationExtension on Conversation {
   String get title {
@@ -19,4 +20,7 @@ extension BuildContextExtension on BuildContext {
 
   /// shortcut to get textTheme
   TextTheme get textTheme => theme.textTheme;
+
+  /// shortcut to localization
+  DalkLocalization get dalkLocalization => DalkLocalization.of(this);
 }

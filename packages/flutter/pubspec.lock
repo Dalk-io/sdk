@@ -154,7 +154,7 @@ packages:
       path: "../dart"
       relative: true
     source: path
-    version: "0.0.5"
+    version: "0.0.6"
   dart_style:
     dependency: transitive
     description:

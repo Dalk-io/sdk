@@ -93,10 +93,14 @@ class DalkSdk {
   bool _shouldReconnect = true;
   final Logger _logger = Logger('DalkSdk');
   final StreamController<Conversation> _newConversation = StreamController.broadcast();
+  final StreamController<void> _conversationsEvents = StreamController.broadcast();
   Peer _peer;
 
   /// [Stream] of new [Conversation] to be alerted when a new one is available
   Stream<Conversation> get newConversation => _newConversation.stream;
+
+  /// [Stream] to be notified when the order of conversations has changed
+  Stream<void> get conversationsEvents => _conversationsEvents.stream;
 
   /// Creates a new [DalkSdk] that allow you to manage a chat for a user.
   ///
@@ -207,7 +211,9 @@ class DalkSdk {
       final conv = parameters.value;
       _logger.info('onConversationCreated ${parameters.value}');
       final conversation = await _createConversationFromData(conv);
+      _conversations[conversation.id] = conversation;
       _newConversation.add(conversation);
+      _conversationsEvents.add(null);
     });
 
     _conversations.values.forEach((conv) {
@@ -255,9 +261,10 @@ class DalkSdk {
     (_conversations[parameters.method.replaceAll('updateMessage', '')] as _ConversationImpl)?._messageUpdate(parameters.value);
   }
 
-  void _forwardIncomingMessage(Parameters parameters) {
+  void _forwardIncomingMessage(Parameters parameters) async {
     _logger.info('receiveMessage ${parameters.value}');
-    (_conversations[parameters.method.replaceAll('receiveMessage', '')] as _ConversationImpl)?._incomingMessage(parameters.value);
+    await (_conversations[parameters.method.replaceAll('receiveMessage', '')] as _ConversationImpl)?._incomingMessage(parameters.value);
+    _conversationsEvents.add(null);
   }
 
   Future<Conversation> _createConversationFromData(Map conv) async {
@@ -269,6 +276,7 @@ class DalkSdk {
       messages: messages,
       isGroup: conv['isGroup'] ?? false,
       logger: _logger,
+      onSendMessage: () => _conversationsEvents.add(null),
       users: conv['users'].cast<Map<String, dynamic>>().map((data) => User._fromBackend(data)).toList().cast<User>(),
       admins: conv['admins']?.cast<Map<String, dynamic>>()?.map((data) => User._fromBackend(data))?.toList()?.cast<User>(),
       currentUser: me,
@@ -363,29 +371,34 @@ class DalkSdk {
 
   /// Returns the list of [Conversation] of the current user ([me])
   ///
+  /// By default the SDK load the conversations once and cache the result for later calls
+  /// you can force a network refresh by using the optional [force] parameter, default to false
+  ///
   /// Throws [ServerException] if something went wrong server side
   ///
   /// Throws [ConnectionClosedException] if sdk is no more connected to the server
   ///
   /// See also:
   /// * [Conversation]  dalk sdk conversation object representation
-  Future<List<Conversation>> getConversations() async {
+  Future<List<Conversation>> getConversations({bool force = false}) async {
     if (_peer.isClosed) {
       throw ConnectionClosedException._();
     }
     try {
-      final result = await _peer.sendRequest('getConversations');
-      _logger.info('getConversations result $result');
+      if (_conversations.isEmpty) {
+        final result = await _peer.sendRequest('getConversations');
+        _logger.info('getConversations result $result');
 
-      for (var conv in result) {
-        final conversation = await _createConversationFromData(conv);
-        if (_conversations[conversation.id] == null) {
-          _conversations[conversation.id] = conversation;
-        } else {
-          (_conversations[conversation.id] as _ConversationImpl)._updateFrom(conversation);
+        for (var conv in result) {
+          final conversation = await _createConversationFromData(conv);
+          if (_conversations[conversation.id] == null) {
+            _conversations[conversation.id] = conversation;
+          } else {
+            (_conversations[conversation.id] as _ConversationImpl)._updateFrom(
+                conversation);
+          }
         }
       }
-
       final sortedList = _conversations.values.toList(growable: false);
       sortedList.sort((conv1, conv2) {
         if (conv1.messages.isEmpty || conv2.messages.isEmpty) {

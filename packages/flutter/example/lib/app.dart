@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
                 theme: ThemeData(
                   primarySwatch: Colors.green,
                 ),
+                localizationsDelegates: [DalkLocalizationDelegate()],
                 routes: {
                   SetupScreen.route: (context) => SetupScreen(),
                   ChatScreen.route: (context) => ChatScreen(),
