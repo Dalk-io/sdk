@@ -99,6 +99,22 @@ mixin _$DalkStore on _DalkStore, Store {
         .run(() => super.setConversationOptions(conversation, subject));
   }
 
+  final _$getOrCreateConversationAsyncAction =
+      AsyncAction('getOrCreateConversation');
+
+  @override
+  Future<void> getOrCreateConversation(User user, String conversationId) {
+    return _$getOrCreateConversationAsyncAction
+        .run(() => super.getOrCreateConversation(user, conversationId));
+  }
+
+  final _$changeSdkAsyncAction = AsyncAction('changeSdk');
+
+  @override
+  Future changeSdk(DalkSdk sdk) {
+    return _$changeSdkAsyncAction.run(() => super.changeSdk(sdk));
+  }
+
   final _$_DalkStoreActionController = ActionController(name: '_DalkStore');
 
   @override
@@ -106,16 +122,6 @@ mixin _$DalkStore on _DalkStore, Store {
     final _$actionInfo = _$_DalkStoreActionController.startAction();
     try {
       return super.setCurrentConversation(conversation);
-    } finally {
-      _$_DalkStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void changeSdk(DalkSdk sdk) {
-    final _$actionInfo = _$_DalkStoreActionController.startAction();
-    try {
-      return super.changeSdk(sdk);
     } finally {
       _$_DalkStoreActionController.endAction(_$actionInfo);
     }

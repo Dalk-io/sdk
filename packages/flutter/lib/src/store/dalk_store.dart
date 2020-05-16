@@ -11,6 +11,7 @@ class DalkStore = _DalkStore with _$DalkStore;
 
 abstract class _DalkStore with Store {
   DalkSdk _client;
+  final bool _needToSetup;
 
   User get me => _client.me;
 
@@ -28,7 +29,7 @@ abstract class _DalkStore with Store {
 
   StreamSubscription _conversationsEventsSubscription;
 
-  _DalkStore();
+  _DalkStore(this._needToSetup);
 
   @action
   void setCurrentConversation(Conversation conversation) {
@@ -40,12 +41,20 @@ abstract class _DalkStore with Store {
     await conversation.setOptions(subject: subject);
   }
 
+  @action
+  Future<void> getOrCreateConversation(User user, String conversationId) async {
+    currentConversation = null;
+    currentConversationLoadState = null;
+    final conversation = await _client.createOneToOneConversation(user, conversationId: conversationId);
+    await _fetchMessages(conversation.id);
+  }
+
   Future<void> setMessageAsSeen(String messageId) async {
     await currentConversation.setMessageAsSeen(messageId);
   }
 
   @action
-  void changeSdk(DalkSdk sdk) {
+  Future<void> changeSdk(DalkSdk sdk) async {
     if(sdk.me == _client?.me) {
       _client = sdk;
     } else {
@@ -54,7 +63,12 @@ abstract class _DalkStore with Store {
       currentConversation = null;
       _client = sdk;
     }
-    _conversationsEventsSubscription?.cancel();
+
+    if (_needToSetup) {
+      await _client.connect();
+    }
+
+    await _conversationsEventsSubscription?.cancel();
     _conversationsEventsSubscription = _client.conversationsEvents.listen((_) async {
         lastFetchedConversations = ObservableList.of(await sdk.getConversations());
     });
@@ -78,6 +92,7 @@ abstract class _DalkStore with Store {
   Future<Conversation> _fetchMessages(String conversationId) async {
     final result = await _client.getConversation(conversationId);
     currentConversation = result;
+    await currentConversation.loadMessages();
     return result;
   }
 }

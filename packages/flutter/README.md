@@ -21,11 +21,6 @@ dalk_sdk: ^1.0.0
 
 And run: 
 ```
-pub get
-```
-
-or for Flutter
-```
 flutter pub get
 ```
 
@@ -33,6 +28,7 @@ flutter pub get
 
 ```dart
 import 'package:dalk_sdk/sdk.dart';
+import 'package:flutter_dalk_sdk/flutter_dalk_sdk.dart';
 
 main() async {
   final currentUser = User(id: 'userId', name: 'userName'); 
@@ -41,69 +37,42 @@ main() async {
   });
   
   await sdk.connect();
-}
-```
-
-### Manage conversations
-
-```dart
-import 'package:dalk_sdk/sdk.dart';
-
-main() async {
-  // after setup, you can retrieve the list of conversations of the user
-  final conversations = await sdk.getConversations();
-  
-  // get real time events when new conversations are created
-  sdk.newConversation.listen((Conversation conversation) {
-    // this get called each time a new conversation is created to let you know new ones
-  });
-
-}
-```
-
-### Manage a single conversation
-
-```dart
-import 'package:dalk_sdk/sdk.dart';
-
-main() async {
-  // after setup, you can retrieve a specific conversation of the user by his id
-  final conversation = await sdk.getConversation('conversationId');
-  
-  // get real time events when new message arrived or the status of a message change
-  conversation.onMessagesEvent.listen((Message message) {
-    // this get called each time a new message arrived or a message status has changed
-  });
-  
-  // you can set custom subject and avatar (group chat only)
-  await conversation.setOptions(
-    subject: 'subject',
-    avatar: 'urlOfTheAvatar',
+  runApp(
+   DalkChat.existing(
+        client: sdk,
+        child: MaterialApp(
+          title: 'Dalk.io demo',
+          theme: ThemeData(
+            primarySwatch: Colors.green,
+          ),
+          localizationsDelegates: [DalkLocalizationDelegate()],
+          ...
+        ),
+      ),
   );
-  
 }
 ```
 
-### Manage message
+### Show conversation list
 
 ```dart
-import 'package:dalk_sdk/sdk.dart';
 
-main() async {
-  // after setup, you can retrieve a specific conversation of the user by his id
-  final conversation = await sdk.getConversation('conversationId');
-  
-  // you can load or refresh messages like this:
-  await conversation.loadMessages();
-  // messages available in conversation.messages
-  
-  // send new message to the conversation
-  await conversation.sendMessage('my message');
+ConversationListView(
+    onTap: (conv) {
+      showWaitingDialog(context, () => talkStore.loadConversation(conv.id), onSuccess: () async {
+        await Navigator.of(context).pushNamed(ChatScreen.route);
+      });
+    },
+);
 
-  // set message as read
-  await conversation.setMessageAsSeen('myMessageId');
+```
 
-}
+### Show a real time conversation
+
+```dart
+
+ConversationChat(conversation: talkStore.currentConversation);
+
 ```
 
 ## Features and bugs

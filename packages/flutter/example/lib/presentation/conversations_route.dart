@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:dalk/app.dart';
 import 'package:dalk/presentation/chat_route.dart';
 import 'package:dalk/presentation/dialogs.dart';
 import 'package:dalk/presentation/setup_route.dart';
@@ -21,7 +22,7 @@ class ConversationsScreen extends HookWidget with AvatarBuilder {
   @override
   Widget build(BuildContext context) {
     final talkStore = Provider.of<DalkStore>(context);
-    final floatButtonLocation = useMemoized(() => _StartFloatFloatingActionButtonLocation());
+    final floatButtonLocation = useMemoized(() => StartFloatFloatingActionButtonLocation());
 
     return Scaffold(
       appBar: AppBar(
@@ -59,6 +60,19 @@ class ConversationsScreen extends HookWidget with AvatarBuilder {
                   backgroundColor: Colors.transparent,
                 ),
               );
+            },
+          ),
+          PopupMenuButton<ExampleChoice>(
+            onSelected: (selected) {
+              Navigator.of(context).pushReplacementNamed(selected.route);
+            },
+            itemBuilder: (BuildContext context) {
+              return choices.where((item) => item.route != route).map((ExampleChoice choice) {
+                return PopupMenuItem<ExampleChoice>(
+                  value: choice,
+                  child: Text(choice.title),
+                );
+              }).toList();
             },
           ),
         ],
@@ -111,8 +125,8 @@ class ConversationsScreen extends HookWidget with AvatarBuilder {
   }
 }
 
-class _StartFloatFloatingActionButtonLocation extends FloatingActionButtonLocation {
-  const _StartFloatFloatingActionButtonLocation();
+class StartFloatFloatingActionButtonLocation extends FloatingActionButtonLocation {
+  const StartFloatFloatingActionButtonLocation();
 
   @override
   Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {

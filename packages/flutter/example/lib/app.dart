@@ -1,3 +1,4 @@
+import 'package:dalk/presentation/actions_route.dart';
 import 'package:dalk/presentation/chat_route.dart';
 import 'package:dalk/presentation/conversations_route.dart';
 import 'package:dalk/presentation/setup_route.dart';
@@ -21,6 +22,18 @@ class Flavor {
 
   Flavor(this.env, this.prefix);
 }
+
+class ExampleChoice {
+  const ExampleChoice({this.title, this.route});
+
+  final String title;
+  final String route;
+}
+
+const List<ExampleChoice> choices = <ExampleChoice>[
+  ExampleChoice(title: 'Full chat example', route: ConversationsScreen.route),
+  ExampleChoice(title: 'Support chat actions example', route: ActionsScreen.route),
+];
 
 void launch() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -59,7 +72,7 @@ class MyApp extends StatelessWidget {
         child: Observer(
           builder: (context) {
             final store = Provider.of<DalkStore>(context);
-            return DalkChat(
+            return DalkChat.existing(
               client: store.dalkSdk,
               child: MaterialApp(
                 title: 'Dalk.io demo',
@@ -69,6 +82,7 @@ class MyApp extends StatelessWidget {
                 localizationsDelegates: [DalkLocalizationDelegate()],
                 routes: {
                   SetupScreen.route: (context) => SetupScreen(),
+                  ActionsScreen.route: (context) => ActionsScreen(),
                   ChatScreen.route: (context) => ChatScreen(),
                   ConversationsScreen.route: (context) => ConversationsScreen(),
                 },
