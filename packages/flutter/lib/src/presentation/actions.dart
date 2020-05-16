@@ -1,5 +1,9 @@
 part of '../flutter_dalk_sdk.dart';
 
+/// Enum to know the location of the [DalkChatFloatingActionButton]
+///
+/// See also:
+/// [DalkChatFloatingActionButton] chat on floating button action
 enum ActionButtonLocation { left, center, right }
 
 class _PopupChat extends StatelessWidget {
@@ -14,36 +18,79 @@ class _PopupChat extends StatelessWidget {
     final talkStore = Provider.of<DalkStore>(context);
     return Material(
       child: Observer(
-        builder: (context) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            AppBar(
-              title: Text(talkStore.currentConversation.title),
-              primary: false,
-              actions: actions,
-            ),
-            Expanded(
-              child: ConversationChat(
-                conversation: talkStore.currentConversation,
+        builder: (context) {
+          Widget child;
+          if (talkStore.currentConversation == null ||
+              talkStore.currentConversationLoadState?.status == FutureStatus.pending) {
+            child = Center(child: CircularProgressIndicator());
+          } else if (talkStore.currentConversationLoadState?.status == FutureStatus.rejected) {
+            child = Center(child: Text(context.dalkLocalization?.anErrorOccurred ?? talkStore.conversationsLoadState.error.toString()));
+          } else {
+            child = ConversationChat(conversation: talkStore.currentConversation);
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              AppBar(
+                title: Text(talkStore.currentConversation.title),
+                primary: false,
+                actions: actions,
               ),
-            ),
-          ],
-        ),
+              Expanded(child: child)
+            ],
+          );
+        },
       ),
     );
   }
 }
 
+/// Widget to show a chat popup to manage real time support
+///
+/// See also:
+/// [ActionButtonLocation] to see possible location
+/// [DalkChatAction] to have a simple button equivalent
 class DalkChatFloatingActionButton extends HookWidget {
   final Radius popupBorderRadius;
   final ActionButtonLocation location;
   final bool enabled;
+  final User user;
+  final String conversationId;
 
-  const DalkChatFloatingActionButton({Key key, this.popupBorderRadius = const Radius.circular(10), this.location, this.enabled = true}) : super(key: key);
+  /// Create a new [DalkChatFloatingActionButton] to show a chat popup to manage real time support
+  ///
+  /// [user] user to open a conversation with, example the support user
+  ///
+  /// [conversationId] force the conversationId to a given one, optional
+  ///
+  /// [popupBorderRadius] border radius for the chat popup, optional, default to 10
+  ///
+  /// [enabled] boolean to enable/disable the floating button, optional, default to true
+  ///
+  /// [location] location of the floating button, used to position the chat popup, optional, default to ActionButtonLocation.right
+  ///
+  /// See also:
+  /// [User] Dalk user representation
+  /// [ActionButtonLocation] to see possible location
+  /// [DalkChatAction] to have a simple button equivalent
+  const DalkChatFloatingActionButton({
+    Key key,
+    @required this.user,
+    this.popupBorderRadius = const Radius.circular(10),
+    this.location = ActionButtonLocation.right,
+    this.conversationId,
+    this.enabled = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final chatVisible = useState<OverlayEntry>(null);
+    final talkStore = Provider.of<DalkStore>(context);
+    useEffect(() {
+      talkStore.getOrCreateConversation(user, conversationId);
+      return null;
+    }, [user, conversationId]);
+
     return FloatingActionButton(
       onPressed: enabled
           ? () {
@@ -113,7 +160,7 @@ class DalkChatFloatingActionButton extends HookWidget {
               height: height,
               child: CustomPaint(
                 willChange: false,
-                painter: BubblePainter(
+                painter: _BubblePainter(
                   color: Colors.black,
                   elevation: 2,
                   radius: radius,
@@ -136,22 +183,56 @@ class DalkChatFloatingActionButton extends HookWidget {
   }
 }
 
+/// Widget to show a chat popup to manage real time support
+///
+/// See also:
+/// [DalkChatFloatingActionButton] to have a floating button equivalent
 class DalkChatAction extends HookWidget {
   final Radius popupBorderRadius;
+  final bool enabled;
+  final User user;
+  final String conversationId;
 
-  DalkChatAction({Key key, this.popupBorderRadius = const Radius.circular(10)}) : super(key: key);
+  /// Create a new [DalkChatFloatingActionButton] to show a chat popup to manage real time support
+  ///
+  /// [user] user to open a conversation with, example the support user
+  ///
+  /// [conversationId] force the conversationId to a given one, optional
+  ///
+  /// [popupBorderRadius] border radius for the chat popup, optional, default to 10
+  ///
+  /// [enabled] boolean to enable/disable the floating button, optional, default to true
+  ///
+  /// See also:
+  /// [DalkChatFloatingActionButton] to have a floating button equivalent
+  DalkChatAction({
+    Key key,
+    this.popupBorderRadius = const Radius.circular(10),
+    @required this.user,
+    this.conversationId,
+    this.enabled = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final chatVisible = useState(false);
+    final talkStore = Provider.of<DalkStore>(context);
+    useEffect(() {
+      talkStore.getOrCreateConversation(user, conversationId);
+      return null;
+    }, [user, conversationId]);
     return IconButton(
-      onPressed: () {
-        _showChat(context);
-      },
+      onPressed: enabled && !chatVisible.value
+          ? () {
+              chatVisible.value = true;
+              _showChat(context, chatVisible);
+            }
+          : null,
       icon: Icon(Icons.chat),
     );
   }
 
-  void _showChat(BuildContext context) {
+  void _showChat(BuildContext context, ValueNotifier<bool> chatVisible) {
     RenderBox renderBox = context.findRenderObject();
     final radius = popupBorderRadius;
     final size = renderBox.size;
@@ -209,7 +290,7 @@ class DalkChatAction extends HookWidget {
               width: width,
               height: height,
               child: CustomPaint(
-                painter: BubblePainter(
+                painter: _BubblePainter(
                   color: Colors.black,
                   elevation: 2,
                   anchor: anchor,
@@ -219,7 +300,10 @@ class DalkChatAction extends HookWidget {
                 ),
                 child: ClipRRect(
                   child: _PopupChat(
-                    actions: <Widget>[IconButton(onPressed: () => entry.remove(), icon: Icon(Icons.close))],
+                    actions: <Widget>[IconButton(onPressed: () {
+                      chatVisible.value = false;
+                      entry.remove();
+                    }, icon: Icon(Icons.close))],
                   ),
                   borderRadius: BorderRadius.all(radius),
                 ),
@@ -233,7 +317,7 @@ class DalkChatAction extends HookWidget {
   }
 }
 
-class BubblePainter extends CustomPainter {
+class _BubblePainter extends CustomPainter {
   final Color color;
   final double elevation;
   final Color shadowColor;
@@ -241,7 +325,7 @@ class BubblePainter extends CustomPainter {
   final bool topNip;
   final Point anchor;
 
-  BubblePainter({
+  _BubblePainter({
     this.color,
     this.anchor,
     this.radius,

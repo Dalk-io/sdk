@@ -1,10 +1,25 @@
 part of '../flutter_dalk_sdk.dart';
 
+/// Callback when on conversation is tapped, it receive a [Conversation] object
+///
+/// See also:
+/// * [Conversation] to know useful stuff about conversation
 typedef OnConversationTap = void Function(Conversation conversation);
 
+/// Widget to show the list of conversation of the connected user
+///
+/// See also:
+/// * [User] instance of the connected user
 class ConversationListView extends HookWidget {
   final OnConversationTap onTap;
 
+  /// Creates a new [ConversationListView] that allow to see list of user conversations
+  ///
+  /// [onTap] is the callback called when a conversation is tapped
+  ///
+  /// See also:
+  /// * [Conversation] to know useful stuff about conversation
+  /// * [OnConversationTap] signature of the [onTap] callback
   const ConversationListView({Key key, this.onTap}) : super(key: key);
 
   @override
@@ -95,11 +110,28 @@ mixin _ConversationListTile {
   }
 }
 
+/// Widget to show the one to one conversation summary
+///
+/// See also:
+/// * [GroupListTile] equivalent of this widget but for group conversation
+/// * [Conversation] to know useful stuff about conversation
 class OneToOneListTile extends StatelessWidget with AvatarBuilder, _ConversationListTile {
   final Conversation conversation;
   final bool isSelected;
-  final void Function(Conversation conversation) onTap;
+  final OnConversationTap onTap;
 
+  /// Create a new [OneToOneListTile] to show the group conversation summary
+  ///
+  /// [conversation] to take information from
+  ///
+  /// [isSelected] default to false, on responsive layout you might want to highlight the selected conversation
+  ///
+  /// [onTap] is the callback called when a conversation is tapped
+  ///
+  /// See also:
+  /// * [GroupListTile] equivalent of this widget but for group conversation
+  /// * [Conversation] to know useful stuff about conversation
+  /// * [OnConversationTap] signature of the [onTap] callback
   const OneToOneListTile({Key key, @required this.conversation, @required this.onTap, this.isSelected = false}) : super(key: key);
 
   @override
@@ -116,11 +148,28 @@ class OneToOneListTile extends StatelessWidget with AvatarBuilder, _Conversation
   }
 }
 
+/// Widget to show the group conversation summary
+///
+/// See also:
+/// * [OneToOneListTile] equivalent of this widget but for one to one conversation
+/// * [Conversation] to know useful stuff about conversation
 class GroupListTile extends StatelessWidget with _ConversationListTile {
   final Conversation conversation;
   final bool isSelected;
-  final void Function(Conversation conversation) onTap;
+  final OnConversationTap onTap;
 
+  /// Create a new [GroupListTile] to show the group conversation summary
+  ///
+  /// [conversation] to take information from
+  ///
+  /// [isSelected] default to false, on responsive layout you might want to highlight the selected conversation
+  ///
+  /// [onTap] is the callback called when a conversation is tapped
+  ///
+  /// See also:
+  /// * [OneToOneListTile] equivalent of this widget but for one to one conversation
+  /// * [Conversation] to know useful stuff about conversation
+  /// * [OnConversationTap] signature of the [onTap] callback
   const GroupListTile({Key key, @required this.conversation, @required this.onTap, this.isSelected = false}) : super(key: key);
 
   @override

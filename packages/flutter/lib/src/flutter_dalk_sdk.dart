@@ -15,11 +15,40 @@ part 'presentation/actions.dart';
 part 'presentation/conversation.dart';
 part 'presentation/conversation_list.dart';
 
+/// Base widget to initialize Dalk SDK, it will provide the raw Dalk SDK to the UI components
 class DalkChat extends StatelessWidget {
   final DalkSdk client;
   final Widget child;
+  final bool _needToSetup;
 
-  const DalkChat({Key key, @required this.client, @required this.child}) : super(key: key);
+  /// Creates a new [DalkChat] that allow you to initialize the SDK for UI components.
+  ///
+  /// [client] is the raw Dalk SDK to use, it should already be initialized and connected
+  ///
+  /// [child] is the child widget
+  const DalkChat.existing(
+      {Key key, @required this.client, @required this.child})
+      : _needToSetup = false, super(key: key);
+
+
+  /// Creates a new [DalkChat] that allow you to initialize the SDK for UI components.
+  ///
+  /// [projectKey] is the Dalk project key to use, you can find it on your dashboard
+  ///
+  /// [user] is the Dalk User currently connected
+  ///
+  /// [signature] is used to secure the connection to the chat if you've enable the feature on your dashboard
+  ///
+  /// [child] is the child widget
+  DalkChat({
+    Key key,
+    @required String projectKey,
+    @required this.child,
+    @required User user,
+    String signature,
+  })  : client = DalkSdk(projectKey, user, signature: signature),
+        _needToSetup = true,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +56,7 @@ class DalkChat extends StatelessWidget {
       value: client,
       child: ProxyProvider0(
         child: Builder(builder: (context) => child),
-        create: (context) => DalkStore()..changeSdk(client),
+        create: (context) => DalkStore(_needToSetup)..changeSdk(client),
         lazy: true,
         update: (BuildContext context, DalkStore previous) {
           final sdk = Provider.of<DalkSdk>(context);
@@ -38,7 +67,11 @@ class DalkChat extends StatelessWidget {
   }
 }
 
+/// Mixin to allow quick creation of an avatar widget
 mixin AvatarBuilder {
+
+  /// Use the avatar of the user if present, or use the first letter of user's name
+  /// [user] to use to create the avatar widget
   Widget getAvatar(User user) {
     if (user.avatar == null) {
       return CircleAvatar(

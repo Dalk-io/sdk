@@ -270,7 +270,7 @@ class _ConversationImpl implements Conversation {
     String avatar,
     Function() onSendMessage,
     Logger logger,
-  })  : this.messages = messages ?? [],
+  })  : messages = messages ?? [],
         _isGroup = isGroup,
         _subject = subject,
         _logger = logger,

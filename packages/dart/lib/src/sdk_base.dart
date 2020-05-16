@@ -20,7 +20,7 @@ class User {
   /// avatar of the user as URL
   final String avatar;
 
-  User({
+  const User({
     @required this.id,
     @required this.name,
     this.avatar,

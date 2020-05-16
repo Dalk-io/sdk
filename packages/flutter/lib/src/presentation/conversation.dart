@@ -1,10 +1,21 @@
 part of '../flutter_dalk_sdk.dart';
 
+/// Widget to manage a chat between two users or a group of users
 class ConversationChat extends HookWidget with AvatarBuilder {
   final Conversation conversation;
   final double width;
   final double height;
 
+  /// Creates a new [ConversationChat] that allow full real time chat feature
+  ///
+  /// [conversation] is the conversation to use on that chat, required
+  ///
+  /// [width] to force the width of the chat, optional
+  ///
+  /// [height] to force the height of the chat, optional
+  ///
+  /// See also:
+  /// * [Conversation] to know useful stuff about conversation
   const ConversationChat({Key key, @required this.conversation, this.width, this.height}) : super(key: key);
 
   @override
